@@ -1,0 +1,108 @@
+---
+- name: Install required packages
+  pacman:
+    name:
+      - snapper
+      - btrfs-progs
+    state: present
+    update_cache: yes
+
+- name: Create snapper config directory
+  file:
+    path: /etc/snapper/configs
+    state: directory
+    mode: '0755'
+
+- name: Create root snapper config
+  copy:
+    content: |
+      # snapper configs for root
+      SUBVOLUME="/"
+      FSTYPE="btrfs"
+      QGROUP=""
+      SPACE_LIMIT="0.5"
+      FREE_LIMIT="0.2"
+      ALLOW_GROUPS="wheel"
+      SYNC_ACL="yes"
+      BACKGROUND_COMPARISON="yes"
+      NUMBER_CLEANUP="yes"
+      NUMBER_LIMIT="10"
+      NUMBER_LIMIT_IMPORTANT="5"
+      TIMELINE_CLEANUP="yes"
+      TIMELINE_LIMIT_HOURLY="5"
+      TIMELINE_LIMIT_DAILY="7"
+      TIMELINE_LIMIT_WEEKLY="0"
+      TIMELINE_LIMIT_MONTHLY="0"
+      TIMELINE_LIMIT_YEARLY="0"
+      EMPTY_PRE_POST_CLEANUP="yes"
+      EMPTY_PRE_POST_MIN_AGE="1800"
+    dest: /etc/snapper/configs/root
+    mode: '0644'
+
+- name: Create snapper config for home
+  copy:
+    content: |
+      # snapper configs for home
+      SUBVOLUME="/home"
+      FSTYPE="btrfs"
+      QGROUP=""
+      SPACE_LIMIT="0.5"
+      FREE_LIMIT="0.2"
+      ALLOW_GROUPS="wheel"
+      SYNC_ACL="yes"
+      BACKGROUND_COMPARISON="yes"
+      NUMBER_CLEANUP="yes"
+      NUMBER_LIMIT="10"
+      NUMBER_LIMIT_IMPORTANT="5"
+      TIMELINE_CLEANUP="yes"
+      TIMELINE_LIMIT_HOURLY="5"
+      TIMELINE_LIMIT_DAILY="7"
+      TIMELINE_LIMIT_WEEKLY="0"
+      TIMELINE_LIMIT_MONTHLY="0"
+      TIMELINE_LIMIT_YEARLY="0"
+      EMPTY_PRE_POST_CLEANUP="yes"
+      EMPTY_PRE_POST_MIN_AGE="1800"
+    dest: /etc/snapper/configs/home
+    mode: '0644'
+
+- name: Enable and start snapper timeline cleanup timer
+  systemd:
+    name: snapper-timeline.timer
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: Enable and start snapper cleanup timer
+  systemd:
+    name: snapper-cleanup.timer
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: Create pre-update snapshot script
+  copy:
+    content: |
+      #!/bin/bash
+      snapper -c root create --description "pre-update"
+      snapper -c home create --description "pre-update"
+    dest: /usr/local/bin/pre-update-snapshot
+    mode: '0755'
+
+- name: Create post-update snapshot script
+  copy:
+    content: |
+      #!/bin/bash
+      snapper -c root create --description "post-update"
+      snapper -c home create --description "post-update"
+    dest: /usr/local/bin/post-update-snapshot
+    mode: '0755'
+
+- name: Update auto-update script to use snapshots
+  copy:
+    content: |
+      #!/bin/bash
+      /usr/local/bin/pre-update-snapshot
+      yay -Syu --noconfirm
+      /usr/local/bin/post-update-snapshot
+    dest: /usr/local/bin/auto-update
+    mode: '0755'

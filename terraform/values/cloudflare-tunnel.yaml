@@ -1,0 +1,13 @@
+cloudflare:
+  # Your Cloudflare account number.
+  account: ${cloudflare_account_id}
+  # The name of the tunnel this instance will serve
+  tunnelName: ${cloudflare_tunnel_name}
+  # The ID of the above tunnel.
+  tunnelId: ${cloudflare_tunnel_id}
+  # The secret for the tunnel.
+  secret: ${cloudflare_tunnel_secret}
+  enableWarp: false
+  ingress:
+    - hostname: "*.kieranajp.uk"
+      service: http://traefik.kube-system.svc.cluster.local:80

@@ -1,0 +1,12 @@
+# Kubernetes configuration
+k8s_context     = "Seldon"
+
+tailscale_oauth_client_id     = ""
+tailscale_oauth_client_secret = ""
+
+cloudflare_account_id     = ""
+cloudflare_tunnel_id      = ""
+cloudflare_tunnel_name    = ""
+cloudflare_tunnel_secret  = ""
+
+github_token = ""

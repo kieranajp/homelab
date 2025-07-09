@@ -1,0 +1,6 @@
+oauth:
+  clientId: "${oauth_client_id}"
+  clientSecret: "${oauth_client_secret}"
+
+config:
+  userspaceNetworking: true

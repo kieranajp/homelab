@@ -1,0 +1,17 @@
+dashboard:
+  enabled: true
+
+ingressRoutes:
+  homepage:
+    namespace: "homelab"
+    match: Host("seldon.local") || Host("home.kieranajp.uk")
+    service:
+      name: "homepage"
+      port: 10352
+
+  home-assistant:
+    namespace: "homelab"
+    match: Host("homeassistant.seldon.local") || Host("homeassistant.kieranajp.uk")
+    service:
+      name: "home-assistant"
+      port: 8080

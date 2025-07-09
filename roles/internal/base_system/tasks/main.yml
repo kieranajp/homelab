@@ -1,0 +1,48 @@
+---
+- name: Ensure AUR packages are installed
+  pacman:
+    name: "{{ aur_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Create update script
+  copy:
+    content: |
+      #!/bin/bash
+      yay -Syu --noconfirm
+    dest: /usr/local/bin/auto-update
+    mode: '0755'
+
+- name: Create systemd timer
+  copy:
+    content: |
+      [Unit]
+      Description=Automatic system updates
+
+      [Timer]
+      OnCalendar=*-*-* {{ update_hour }}:{{ update_minute }}:00
+      RandomizedDelaySec=300
+
+      [Install]
+      WantedBy=timers.target
+    dest: /etc/systemd/system/auto-update.timer
+    mode: '0644'
+
+- name: Create systemd service
+  copy:
+    content: |
+      [Unit]
+      Description=Automatic system updates
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/auto-update
+    dest: /etc/systemd/system/auto-update.service
+    mode: '0644'
+
+- name: Enable and start update timer
+  systemd:
+    name: auto-update.timer
+    enabled: yes
+    state: started
+    daemon_reload: yes

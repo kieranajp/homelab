@@ -1,0 +1,78 @@
+workload:
+  main:
+    podSpec:
+      containers:
+        main:
+          env:
+            HOMEPAGE_ALLOWED_HOSTS: "seldon.local,home.kieranajp.uk,localhost,127.0.0.1"
+
+forceConfigFromValues: true
+configmap:
+  config:
+    enabled: true
+    data:
+      custom.js: ""
+      custom.css: ""
+      kubernetes.yaml: |
+        mode: cluster
+      settings.yaml: |
+        ---
+        # For configuration options and examples, please see:
+        # https://gethomepage.dev/latest/configs/settings
+
+        providers:
+          openweathermap: openweathermapapikey
+          weatherapi: weatherapiapikey
+      widgets.yaml: |
+        ---
+        # For configuration options and examples, please see:
+        # https://gethomepage.dev/latest/configs/widgets
+
+        - resources:
+            cpu: true
+            memory: true
+            disk: /
+
+        - search:
+            provider: google
+            target: _blank
+
+      services.yaml: |
+        ---
+        # For configuration options and examples, please see:
+        # https://gethomepage.dev/latest/configs/services
+
+        - Home Automation:
+            - Home Assistant:
+                href: https://home-assistant.seldon.local
+                description: Home automation hub
+                icon: home-assistant.png
+
+        - Media:
+            - Plex:
+                href: http://schwengel.local:32400
+                description: Media server
+                icon: plex.png
+
+        - NAS:
+            - Synology:
+                href: http://schwengel.local:5001
+                description: Synology NAS
+                icon: synology.png
+
+      bookmarks.yaml: |
+        ---
+        # For configuration options and examples, please see:
+        # https://gethomepage.dev/latest/configs/bookmarks
+
+        - Kiery:
+            - Kiery:
+              - abbr: KP
+                icon: https://www.kieranajp.uk/favicon.svg
+                href: https://kieranajp.uk
+                description: "Kiery kiery"
+            - Github:
+              - abbr: GH
+                icon: https://github.com/fluidicon.png
+                href: https://github.com/kieranajp
+                description: "Kieran's GitHub"

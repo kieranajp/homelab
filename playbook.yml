@@ -1,0 +1,13 @@
+---
+- name: Configure Seldon
+  hosts: all
+  become: true
+  roles:
+    - role: base_system
+      tags: [ setup, base ]
+    - role: btrfs_snapshots
+      tags: [ setup ]
+    - role: networking
+      tags: [ setup, networking ]
+    - role: k3s
+      tags: [ setup, k3s ]
