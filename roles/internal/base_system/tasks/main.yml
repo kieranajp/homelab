@@ -9,7 +9,21 @@
   copy:
     content: |
       #!/bin/bash
+      # Run system updates
       yay -Syu --noconfirm
+
+      # Check if kernel was updated
+      RUNNING_KERNEL=$(uname -r)
+      INSTALLED_KERNEL=$(pacman -Q linux | awk '{print $2}')
+
+      if [[ "$RUNNING_KERNEL" != "$INSTALLED_KERNEL" ]]; then
+          echo "Kernel updated from $RUNNING_KERNEL to $INSTALLED_KERNEL"
+          echo "Rebooting in 60 seconds to apply kernel update..."
+          sleep 60
+          reboot
+      else
+          echo "No kernel update, no reboot needed"
+      fi
     dest: /usr/local/bin/auto-update
     mode: '0755'
 
