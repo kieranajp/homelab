@@ -1,9 +1,9 @@
 resource "helm_release" "tailscale" {
-  name       = "tailscale"
-  repository = "https://pkgs.tailscale.com/helmcharts"
-  chart      = "tailscale-operator"
-  version    = "1.84.2"
-  namespace  = "tailscale"
+  name             = "tailscale"
+  repository       = "https://pkgs.tailscale.com/helmcharts"
+  chart            = "tailscale-operator"
+  version          = "1.84.2"
+  namespace        = "tailscale"
   create_namespace = true
 
   values = [
