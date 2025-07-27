@@ -10,3 +10,7 @@ cloudflare_tunnel_name    = ""
 cloudflare_tunnel_secret  = ""
 
 github_token = ""
+
+google_client_id = ""
+google_client_secret = ""
+cookie_secret = ""

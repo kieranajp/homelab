@@ -1,4 +1,3 @@
-{{ if .Values.dashboard.enabled }}
 apiVersion: helm.cattle.io/v1
 kind: HelmChartConfig
 metadata:
@@ -6,14 +5,19 @@ metadata:
   namespace: kube-system
 spec:
   valuesContent: |-
+    experimental:
+      plugins:
+        google-oidc-auth-middleware:
+          moduleName: "github.com/andrewkroh/google-oidc-auth-middleware"
+          version: "v0.2.0"
     additionalArguments:
       - "--api"
       - "--api.dashboard=true"
       - "--api.insecure=true"
     ports:
       traefik:
-        expose: true
+        expose:
+          default: true
     providers:
       kubernetesCRD:
         allowCrossNamespace: true
-{{ end }}

@@ -3,7 +3,6 @@ resource "helm_release" "cloudflare-tunnel" {
   repository       = "https://cloudflare.github.io/helm-charts"
   chart            = "cloudflare-tunnel"
   namespace        = "homelab"
-  create_namespace = true
 
   values = [
     templatefile("${path.module}/values/cloudflare-tunnel.yaml", {

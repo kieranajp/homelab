@@ -84,3 +84,12 @@
     regexp: 'default'
     replace: '{{ hostname.stdout }}'
   delegate_to: localhost
+
+- name: Deploy Traefik configuration
+  template:
+    src: traefik-config.yaml.j2
+    dest: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart k3s

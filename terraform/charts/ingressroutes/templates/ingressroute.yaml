@@ -13,4 +13,11 @@ spec:
     services:
     - name: {{ $route.service.name }}
       port: {{ $route.service.port }}
+    {{- if $route.middlewares }}
+    middlewares:
+    {{- range $route.middlewares }}
+    - name: {{ . }}
+      namespace: {{ $route.namespace }}
+    {{- end }}
+    {{- end }}
 {{- end }}

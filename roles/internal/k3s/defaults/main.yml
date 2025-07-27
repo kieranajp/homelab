@@ -1,2 +1,2 @@
 ---
-reinstall_k3s: true
+reinstall_k3s: False

@@ -4,7 +4,6 @@ resource "helm_release" "homepage" {
   chart            = "homepage"
   version          = "10.3.0"
   namespace        = "homelab"
-  create_namespace = true
 
   values = [
     file("${path.module}/values/homepage.yaml")

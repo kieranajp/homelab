@@ -1,0 +1,10 @@
+{{- range $name, $middleware := .Values.middlewares }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $name }}
+  namespace: {{ $middleware.namespace }}
+spec:
+{{- $middleware.spec | nindent 2 }}
+{{- end }}
