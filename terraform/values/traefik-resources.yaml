@@ -1,16 +1,18 @@
 ingressRoutes:
   homepage:
     namespace: homelab
-    match: Host("seldon.local") || Host("home.kieranajp.uk")
+    match: Host("home.kieranajp.uk")
     middlewares:
     - google-auth
     service:
       name: homepage
       port: 10352
 
-  home-assistant:
+  homeassistant:
     namespace: homelab
-    match: Host("homeassistant.seldon.local") || Host("homeassistant.kieranajp.uk")
+    match: Host("homeassistant.kieranajp.uk")
+    middlewares:
+    - google-auth
     service:
       name: home-assistant
       port: 8080

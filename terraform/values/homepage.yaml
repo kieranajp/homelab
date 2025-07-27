@@ -44,7 +44,7 @@ configmap:
 
         - Home Automation:
             - Home Assistant:
-                href: https://home-assistant.seldon.local
+                href: https://homeassistant.kieranajp.uk
                 description: Home automation hub
                 icon: home-assistant.png
 
