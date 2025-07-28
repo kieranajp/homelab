@@ -11,8 +11,8 @@ ingressRoutes:
   homeassistant:
     namespace: homelab
     match: Host("homeassistant.kieranajp.uk")
-    middlewares:
-    - google-auth
+    #middlewares:
+    #- google-auth
     service:
       name: home-assistant
       port: 8080

@@ -1,0 +1,10 @@
+controller:
+  type: Deployment
+
+ingress:
+  external: true
+
+configuration:
+  enabled: true
+  trusted_proxies:
+    - "10.42.0.0/16"
