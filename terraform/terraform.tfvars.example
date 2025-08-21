@@ -1,5 +1,5 @@
 # Kubernetes configuration
-k8s_context     = "Seldon"
+k8s_context     = "seldon"
 
 tailscale_oauth_client_id     = ""
 tailscale_oauth_client_secret = ""

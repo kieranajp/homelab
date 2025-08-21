@@ -7,7 +7,7 @@ variable "kubeconfig_path" {
 variable "k8s_context" {
   description = "Kubernetes context to use"
   type        = string
-  default     = "Seldon"
+  default     = "seldon"
 }
 
 variable "tailscale_oauth_client_id" {
