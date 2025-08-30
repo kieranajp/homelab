@@ -1,7 +1,9 @@
 resource "kubernetes_secret" "ghcr_secret" {
+  for_each = toset(["homelab", "apps"])
+
   metadata {
     name      = "ghcr-secret"
-    namespace = "homelab"
+    namespace = each.key
   }
 
   type = "kubernetes.io/dockerconfigjson"
