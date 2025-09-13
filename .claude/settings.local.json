@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get pods:*)",
+      "Bash(kubectl get configmap:*)",
+      "Bash(kubectl -n auth logs hydra-client-registration-lxmdh)",
+      "Bash(kubectl:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

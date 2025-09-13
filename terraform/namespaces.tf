@@ -1,17 +1,35 @@
-resource "kubernetes_namespace" "homelab" {
+# loop over a list of namespaces to create them dynamically
+locals {
+  namespaces = ["homelab", "monitoring", "apps"]
+}
+
+resource "kubernetes_namespace" "namespaces" {
+  for_each = toset(local.namespaces)
+
   metadata {
-    name = "homelab"
+    name = each.key
   }
 }
 
-resource "kubernetes_namespace" "monitoring" {
-  metadata {
-    name = "monitoring"
-  }
-}
+resource "kubernetes_secret" "ghcr_secret" {
+  for_each = toset(local.namespaces)
 
-resource "kubernetes_namespace" "apps" {
   metadata {
-    name = "apps"
+    name      = "ghcr-secret"
+    namespace = each.key
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "ghcr.io" = {
+          username = "kieranajp"
+          password = var.github_token
+          auth     = base64encode("kieranajp:${var.github_token}")
+        }
+      }
+    })
   }
 }
