@@ -6,7 +6,8 @@
       "Bash(kubectl -n auth logs hydra-client-registration-lxmdh)",
       "Bash(kubectl:*)",
       "mcp__sequential-thinking__sequentialthinking",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

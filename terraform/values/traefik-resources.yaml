@@ -17,6 +17,16 @@ ingressRoutes:
       name: home-assistant
       port: 8080
 
+  # Example API route using OAuth authentication for MCP
+  api-example:
+    namespace: homelab
+    match: Host("api.kieranajp.uk")
+    middlewares:
+    - oauth-auth
+    service:
+      name: api-service
+      port: 8080
+
 middlewares:
   google-auth:
     namespace: homelab
@@ -31,3 +41,11 @@ middlewares:
           authorized:
             domains:
             - kieranajp.co.uk
+
+  oauth-auth:
+    namespace: homelab
+    spec: |
+      forwardAuth:
+        address: "http://oathkeeper-proxy.auth.svc.cluster.local:4455"
+        authResponseHeaders:
+        - "X-User"

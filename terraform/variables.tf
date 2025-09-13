@@ -69,3 +69,27 @@ variable "cookie_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "hydra_postgres_password" {
+  description = "PostgreSQL password for Hydra database"
+  type        = string
+  sensitive   = true
+}
+
+variable "hydra_system_secret" {
+  description = "Hydra system secret (32+ chars)"
+  type        = string
+  sensitive   = true
+}
+
+variable "hydra_cookie_secret" {
+  description = "Hydra cookie secret (32+ chars)"
+  type        = string
+  sensitive   = true
+}
+
+variable "hydra_salt" {
+  description = "Hydra pairwise salt (32+ chars)"
+  type        = string
+  sensitive   = true
+}

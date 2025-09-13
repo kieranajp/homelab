@@ -14,3 +14,8 @@ github_token = ""
 google_client_id = ""
 google_client_secret = ""
 cookie_secret = ""
+
+hydra_postgres_password = ""
+hydra_system_secret = ""
+hydra_cookie_secret = ""
+hydra_salt = ""

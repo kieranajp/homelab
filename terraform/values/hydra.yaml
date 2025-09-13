@@ -1,0 +1,60 @@
+hydra:
+  config:
+    dsn: postgres://postgres:${postgres_password}@hydra-postgresql:5432/hydra?sslmode=disable
+
+    urls:
+      self:
+        issuer: https://hydra.kieranajp.uk/
+      consent: https://hydra.kieranajp.uk/consent
+      login: https://hydra.kieranajp.uk/login
+
+    secrets:
+      system:
+        - "${hydra_system_secret}"
+      cookie:
+        - "${hydra_cookie_secret}"
+
+    oidc:
+      subject_identifiers:
+        supported_types:
+          - public
+          - pairwise
+        pairwise:
+          salt: "${hydra_salt}"
+
+    oauth2:
+      expose_internal_errors: true
+
+    log:
+      level: info
+
+deployment:
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+service:
+  admin:
+    enabled: true
+    type: ClusterIP
+    port: 4445
+  public:
+    enabled: true
+    type: ClusterIP
+    port: 4444
+
+ingress:
+  admin:
+    enabled: false
+  public:
+    enabled: false
+
+job:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: before-hook-creation

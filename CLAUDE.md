@@ -2,9 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
 ## Repository Overview
 
-This is a dual-layer infrastructure repository for managing a Kubernetes homelab called "seldon". It combines Ansible automation for initial system setup with OpenTofu/Terraform for Kubernetes application deployment. The infrastructure deploys authentication, monitoring, home automation, and custom applications using a combination of Ansible roles and Helm charts.
+This is a dual-layer infrastructure repository for managing a Kubernetes homelab called "seldon". It combines Ansible automation for initial system setup with OpenTofu/Terraform for Kubernetes application deployment. The infrastructure deploys monitoring, home automation, and custom applications using a combination of Ansible roles and Helm charts.
 
 ## Architecture
 
@@ -12,7 +18,7 @@ The infrastructure is organized in two main layers:
 
 ### Ansible Layer (System Setup)
 - **Base System**: Fundamental system configuration and packages
-- **BTRFS Snapshots**: Filesystem snapshot management for system recovery  
+- **BTRFS Snapshots**: Filesystem snapshot management for system recovery
 - **Networking**: Network configuration and firewall setup
 - **K3s**: Lightweight Kubernetes cluster installation and configuration
 
@@ -20,7 +26,6 @@ The infrastructure is organized in two main layers:
 - **OpenTofu**: Infrastructure as code using Helm and Kubernetes providers
 - **Helm Charts**: Custom charts in `terraform/charts/` directory for application deployments
 - **Values**: Configuration files in `terraform/values/` directory for each service
-- **OAuth/Auth**: Ory Hydra-based OAuth 2.0 authentication with Google OAuth upstream
 - **Ingress**: Traefik-based routing with authentication middleware
 - **Monitoring**: Victoria Metrics and Grafana stack
 
@@ -58,27 +63,19 @@ tofu show
 tofu state list
 ```
 
-### Generate Required Secrets
+### Kubernetes Operations
 ```bash
-# Hydra OAuth secrets (add to terraform/terraform.tfvars)
-openssl rand -hex 32  # hydra_system_secret
-openssl rand -hex 32  # hydra_cookie_secret  
-openssl rand -hex 32  # hydra_oidc_salt
+# Check cluster status
+kubectl get nodes
+kubectl get pods --all-namespaces
 
-# Cookie secret for oauth2-proxy
-openssl rand -base64 32  # cookie_secret
-```
+# Debug specific services
+kubectl -n apps logs deployment/mcp-server
+kubectl -n home-automation logs deployment/home-assistant
+kubectl -n monitoring logs deployment/victoria-metrics
 
-### Kubernetes Debugging
-```bash
-# Check application status
-kubectl -n apps get pods
-kubectl -n monitoring get pods
-kubectl -n auth get pods
-
-# View logs
-kubectl -n auth logs -l app=hydra
-kubectl -n apps logs -l app=mcp-server
+# Port forward for local access
+kubectl port-forward -n monitoring svc/grafana 3000:3000
 ```
 
 ## Key Configuration
@@ -94,7 +91,6 @@ All sensitive configuration is managed through `terraform/terraform.tfvars` (use
 - OAuth credentials for Google authentication
 - Cloudflare tunnel configuration
 - GitHub container registry access
-- Hydra OAuth secrets (generate with `openssl rand -hex 32`)
 
 ### Kubernetes Context
 The default Kubernetes context is "seldon". Configuration assumes kubeconfig at `~/.kube/config`.
@@ -111,9 +107,7 @@ The default Kubernetes context is "seldon". Configuration assumes kubeconfig at 
 ### Terraform Directory
 - `*.tf` - Main OpenTofu configuration files, organized by service
 - `charts/` - Custom Helm charts for applications
-  - `traefik-resources/` - Traefik middlewares, ingress routes, and auth components
-  - `hydra/` - Ory Hydra OAuth server
-  - `oauth2-proxy/` - OAuth2 proxy for authentication
+  - `traefik-resources/` - Traefik middlewares, ingress routes, etc.
 - `values/` - Helm values files corresponding to each service
 - `variables.tf` - All OpenTofu variable definitions with sensitive marking
 
@@ -125,41 +119,12 @@ The default Kubernetes context is "seldon". Configuration assumes kubeconfig at 
 - `k3s/` - K3s Kubernetes cluster installation and configuration
 - `networking/` - Network setup, firewall rules, and connectivity
 
-## Authentication Architecture
-
-The system uses a two-tier authentication approach:
-
-1. **Ory Hydra OAuth 2.0 Server** (`auth` namespace)
-   - RFC 8414 compliant authorization server
-   - Google OAuth as upstream identity provider
-   - Auto-approval for specific email domains
-   - MCP-compatible token exchange
-
-2. **Traefik Middleware** 
-   - `hydra-oauth` middleware for web applications
-   - `api-oauth` middleware for API authentication
-   - JWT token validation and forwarding
-
-### OAuth Endpoints
-- Authorization: `https://auth.kieranajp.uk/oauth2/auth`
-- Token: `https://auth.kieranajp.uk/oauth2/token` 
-- Discovery: `https://auth.kieranajp.uk/.well-known/oauth-authorization-server`
-
 ## Service Namespaces
 
 - `apps` - Application deployments (mcp-server, etc.)
-- `auth` - Authentication services (Hydra)
 - `monitoring` - Metrics and observability (Victoria Metrics, Grafana)
 - `networking` - Network-related services
 - `home-automation` - Home Assistant and related services
-
-## Important Files
-
-- `terraform/HYDRA_SETUP.md` - Detailed OAuth 2.0 setup instructions and architecture
-- `terraform/OAUTH2_API_AUTH.md` - API authentication configuration guide
-- `terraform/terraform.tfvars.example` - Template for sensitive configuration
-- `terraform/traefik-resources.tf` - Main ingress and auth configuration
-- `terraform/variables.tf` - Complete variable definitions with security annotations
 
 ## Development Workflow
 

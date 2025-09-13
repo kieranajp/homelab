@@ -1,0 +1,81 @@
+oathkeeper:
+  config:
+    serve:
+      proxy:
+        port: 4455
+      api:
+        port: 4456
+
+    access_rules:
+      inline: |
+        [
+          {
+            "id": "api-access",
+            "match": {
+              "url": "<.*>",
+              "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+            },
+            "authenticators": [
+              {
+                "handler": "oauth2_introspection"
+              }
+            ],
+            "authorizer": {
+              "handler": "allow"
+            },
+            "mutators": [
+              {
+                "handler": "header"
+              }
+            ]
+          }
+        ]
+
+    authenticators:
+      oauth2_introspection:
+        enabled: true
+        config:
+          introspection_url: http://hydra-admin:4445/admin/oauth2/introspect
+          scope_strategy: wildcard
+
+    authorizers:
+      allow:
+        enabled: true
+
+    mutators:
+      noop:
+        enabled: true
+      header:
+        enabled: true
+        config:
+          headers:
+            X-User: "{{ print .Subject }}"
+
+    errors:
+      fallback:
+        - json
+      handlers:
+        json:
+          enabled: true
+          config:
+            verbose: true
+
+deployment:
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+
+service:
+  proxy:
+    enabled: true
+    type: ClusterIP
+    port: 4455
+  api:
+    enabled: true
+    type: ClusterIP
+    port: 4456

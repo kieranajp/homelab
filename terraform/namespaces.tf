@@ -1,6 +1,6 @@
 # loop over a list of namespaces to create them dynamically
 locals {
-  namespaces = ["homelab", "monitoring", "apps"]
+  namespaces = ["homelab", "monitoring", "apps", "auth"]
 }
 
 resource "kubernetes_namespace" "namespaces" {
