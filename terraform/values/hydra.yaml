@@ -4,7 +4,7 @@ hydra:
 
     urls:
       self:
-        issuer: https://hydra.kieranajp.uk/
+        issuer: https://hydra.kieranajp.uk
       consent: https://hydra.kieranajp.uk/consent
       login: https://hydra.kieranajp.uk/login
 

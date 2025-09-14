@@ -116,7 +116,7 @@ resource "kubernetes_job" "hydra_client_setup" {
               done
 
               # Create MCP client for client credentials flow
-              hydra --endpoint http://hydra-admin:4445 create client \
+              hydra --endpoint http://hydra-admin:4445 create oauth2-client \
                 --id mcp-client \
                 --name "MCP HTTP Client" \
                 --grant-type client_credentials \

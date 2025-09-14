@@ -1,6 +1,7 @@
+# Namespace-specific ingress routes and middlewares
+%{ if namespace == "homelab" ~}
 ingressRoutes:
   homepage:
-    namespace: homelab
     match: Host("home.kieranajp.uk")
     middlewares:
     - google-auth
@@ -9,27 +10,42 @@ ingressRoutes:
       port: 10352
 
   homeassistant:
-    namespace: homelab
     match: Host("homeassistant.kieranajp.uk")
-    #middlewares:
-    #- google-auth
     service:
       name: home-assistant
       port: 8080
 
   # Example API route using OAuth authentication for MCP
   api-example:
-    namespace: homelab
     match: Host("api.kieranajp.uk")
     middlewares:
     - oauth-auth
     service:
       name: api-service
       port: 8080
+%{ endif ~}
+
+%{ if namespace == "auth" ~}
+ingressRoutes:
+  # Hydra OAuth 2.0 public endpoints (token, authorize, well-known)
+  hydra-public:
+    match: Host("hydra.kieranajp.uk")
+    service:
+      name: hydra-public
+      port: 4444
+
+  # Hydra admin endpoints (protected with Google auth)
+  hydra-admin:
+    match: Host("hydra-admin.kieranajp.uk")
+    middlewares:
+    - google-auth
+    service:
+      name: hydra-admin
+      port: 4445
+%{ endif ~}
 
 middlewares:
   google-auth:
-    namespace: homelab
     spec: |
       plugin:
         google-oidc-auth-middleware:
@@ -43,7 +59,6 @@ middlewares:
             - kieranajp.co.uk
 
   oauth-auth:
-    namespace: homelab
     spec: |
       forwardAuth:
         address: "http://oathkeeper-proxy.auth.svc.cluster.local:4455"

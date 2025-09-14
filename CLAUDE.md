@@ -2,11 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# important-instruction-reminders
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+IMPORTANT: always make sure you're on the `seldon` context in kube - I really don't want to run commands against my work cluster! A quick `ktx seldon` is enough.
 
 ## Repository Overview
 
@@ -28,6 +24,7 @@ The infrastructure is organized in two main layers:
 - **Values**: Configuration files in `terraform/values/` directory for each service
 - **Ingress**: Traefik-based routing with authentication middleware
 - **Monitoring**: Victoria Metrics and Grafana stack
+- **Authentication**: Ory Hydra OAuth 2.0 server with Oathkeeper auth proxy for programmatic access
 
 ## Common Commands
 
@@ -73,6 +70,8 @@ kubectl get pods --all-namespaces
 kubectl -n apps logs deployment/mcp-server
 kubectl -n home-automation logs deployment/home-assistant
 kubectl -n monitoring logs deployment/victoria-metrics
+kubectl -n auth logs deployment/hydra
+kubectl -n auth logs deployment/oathkeeper
 
 # Port forward for local access
 kubectl port-forward -n monitoring svc/grafana 3000:3000
@@ -91,6 +90,8 @@ All sensitive configuration is managed through `terraform/terraform.tfvars` (use
 - OAuth credentials for Google authentication
 - Cloudflare tunnel configuration
 - GitHub container registry access
+- Hydra OAuth 2.0 secrets (system, cookie, salt)
+- PostgreSQL credentials for Hydra database
 
 ### Kubernetes Context
 The default Kubernetes context is "seldon". Configuration assumes kubeconfig at `~/.kube/config`.
@@ -125,6 +126,7 @@ The default Kubernetes context is "seldon". Configuration assumes kubeconfig at 
 - `monitoring` - Metrics and observability (Victoria Metrics, Grafana)
 - `networking` - Network-related services
 - `home-automation` - Home Assistant and related services
+- `auth` - OAuth 2.0 infrastructure (Hydra, Oathkeeper, PostgreSQL)
 
 ## Development Workflow
 

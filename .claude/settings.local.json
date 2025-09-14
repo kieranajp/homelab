@@ -7,7 +7,9 @@
       "Bash(kubectl:*)",
       "mcp__sequential-thinking__sequentialthinking",
       "Bash(curl:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(tofu apply:*)",
+      "mcp__searxng__web_url_read"
     ],
     "deny": [],
     "ask": []
