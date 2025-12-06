@@ -5,7 +5,7 @@ resource "helm_release" "traefik_middlewares" {
   name             = "traefik-middlewares-${each.key}"
   chart            = "./charts/traefik-resources"
   namespace        = each.key
-  timeout          = 60
+  timeout          = 90
   atomic           = true
 
   values = [

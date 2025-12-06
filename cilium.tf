@@ -7,7 +7,7 @@ resource "helm_release" "cilium" {
   chart      = "cilium"
   version    = "1.18.4"
   namespace  = "kube-system"
-  timeout    = 600
+  timeout    = 90
   atomic     = true
 
   values = [

@@ -13,6 +13,9 @@ spec:
     kind: Rule
     services:
     - name: {{ $route.service.name }}
+      {{- if $route.service.namespace }}
+      namespace: {{ $route.service.namespace }}
+      {{- end }}
       port: {{ $route.service.port }}
     {{- if $route.middlewares }}
     middlewares:

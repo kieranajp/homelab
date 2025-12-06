@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/local"
       version = "~> 2.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -30,4 +34,8 @@ provider "helm" {
 provider "kubernetes" {
   config_path    = var.kubeconfig_path
   config_context = var.k8s_context
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

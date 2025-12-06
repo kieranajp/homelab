@@ -4,7 +4,7 @@ ingressRoutes:
   homepage:
     match: Host("home.kieranajp.uk")
     middlewares:
-    - google-auth
+    - ory-auth
     service:
       name: homepage
       port: 10352
@@ -14,19 +14,26 @@ ingressRoutes:
     service:
       name: home-assistant
       port: 8080
-
-  # Example API route using OAuth authentication for MCP
-  api-example:
-    match: Host("api.kieranajp.uk")
-    middlewares:
-    - oauth-auth
-    service:
-      name: api-service
-      port: 8080
 %{ endif ~}
 
 %{ if namespace == "auth" ~}
 ingressRoutes:
+  # Kratos selfservice UI (login/registration forms)
+  kratos-ui:
+    match: Host("kratos.kieranajp.uk") && PathPrefix("/ui")
+    middlewares:
+    - strip-ui-prefix
+    service:
+      name: kratos-selfservice-ui-kratos-selfservice-ui-node
+      port: 80
+
+  # Kratos public API (login flows, sessions, etc)
+  kratos-public:
+    match: Host("kratos.kieranajp.uk")
+    service:
+      name: kratos-public
+      port: 4433
+
   # Hydra OAuth 2.0 public endpoints (token, authorize, well-known)
   hydra-public:
     match: Host("hydra.kieranajp.uk")
@@ -34,33 +41,34 @@ ingressRoutes:
       name: hydra-public
       port: 4444
 
-  # Hydra admin endpoints (protected with Google auth)
+  # Hydra admin endpoints (protected with Ory auth)
   hydra-admin:
     match: Host("hydra-admin.kieranajp.uk")
     middlewares:
-    - google-auth
+    - ory-auth
     service:
       name: hydra-admin
       port: 4445
 %{ endif ~}
 
 middlewares:
-  google-auth:
+  strip-ui-prefix:
     spec: |
-      plugin:
-        google-oidc-auth-middleware:
-          oidc:
-            clientID: "${google_client_id}"
-            clientSecret: "${google_client_secret}"
-          cookie:
-            secret: "${cookie_secret}"
-          authorized:
-            domains:
-            - kieranajp.co.uk
+      stripPrefix:
+        prefixes:
+        - "/ui"
 
-  oauth-auth:
+  ory-auth:
     spec: |
       forwardAuth:
-        address: "http://oathkeeper-proxy.auth.svc.cluster.local:4455"
+        address: "http://oathkeeper-api.auth.svc.cluster.local:4456/decisions"
         authResponseHeaders:
         - "X-User"
+
+  jwt-auth:
+    spec: |
+      forwardAuth:
+        address: "http://oathkeeper-api.auth.svc.cluster.local:4456/decisions"
+        authResponseHeaders:
+        - "X-User"
+        - "Authorization"

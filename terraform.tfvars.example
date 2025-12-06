@@ -10,7 +10,9 @@ talos_hostname         = "talos-cp1"
 tailscale_oauth_client_id     = ""
 tailscale_oauth_client_secret = ""
 
+cloudflare_api_token      = ""
 cloudflare_account_id     = ""
+cloudflare_zone_id        = ""
 cloudflare_tunnel_id      = ""
 cloudflare_tunnel_name    = ""
 cloudflare_tunnel_secret  = ""
@@ -21,7 +23,16 @@ google_client_id = ""
 google_client_secret = ""
 cookie_secret = ""
 
-hydra_postgres_password = ""
+auth_postgres_password = ""
 hydra_system_secret = ""
 hydra_cookie_secret = ""
 hydra_salt = ""
+kratos_secret = ""
+kratos_identities = [
+  {
+    email      = "your@email.uk"
+    first_name = "Your"
+    last_name  = "Name"
+  },
+  # Add more as needed
+]

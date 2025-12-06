@@ -1,5 +1,4 @@
 # Traefik Ingress Controller
-# This replaces the K3s bundled Traefik and the HelmChartConfig from Ansible
 
 resource "helm_release" "traefik" {
   name       = "traefik"
@@ -7,7 +6,7 @@ resource "helm_release" "traefik" {
   chart      = "traefik"
   version    = "37.4.0"
   namespace  = "kube-system"
-  timeout    = 300
+  timeout    = 90
   atomic     = true
 
   # Traefik configuration migrated from roles/internal/k3s/templates/traefik-config.yaml.j2

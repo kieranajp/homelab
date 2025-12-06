@@ -13,3 +13,21 @@ resource "helm_release" "cloudflare-tunnel" {
     })
   ]
 }
+
+resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
+  account_id = var.cloudflare_account_id
+  tunnel_id  = var.cloudflare_tunnel_id
+
+  config {
+    # Wildcard route for all *.kieranajp.uk to Traefik
+    ingress_rule {
+      hostname = "*.kieranajp.uk"
+      service  = "http://traefik.kube-system.svc.cluster.local:80"
+    }
+
+    # Catch-all rule (required)
+    ingress_rule {
+      service = "http_status:404"
+    }
+  }
+}

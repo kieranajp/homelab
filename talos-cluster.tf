@@ -1,5 +1,4 @@
 # Talos Kubernetes Cluster Configuration
-# This replaces the K3s installation from Ansible
 
 provider "talos" {}
 
@@ -79,6 +78,26 @@ resource "talos_cluster_kubeconfig" "this" {
 
   depends_on = [
     talos_machine_bootstrap.this
+  ]
+}
+
+resource "helm_release" "local_path_provisioner" {
+  name      = "local-path-provisioner"
+  chart     = "./charts/local-path-provisioner"
+  namespace = "kube-system"
+  timeout   = 90
+  atomic    = true
+
+  values = [
+    yamlencode({
+      storageClass = {
+        defaultClass = true
+      }
+    })
+  ]
+
+  depends_on = [
+    helm_release.cilium
   ]
 }
 

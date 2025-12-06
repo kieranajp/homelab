@@ -46,6 +46,18 @@ variable "cloudflare_tunnel_secret" {
   sensitive   = true
 }
 
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token for managing DNS and tunnel routes"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare zone ID for kieranajp.uk domain"
+  type        = string
+  sensitive   = true
+}
+
 variable "github_token" {
   description = "GitHub token for accessing ghcr.io"
   type        = string
@@ -70,8 +82,8 @@ variable "cookie_secret" {
   sensitive   = true
 }
 
-variable "hydra_postgres_password" {
-  description = "PostgreSQL password for Hydra database"
+variable "auth_postgres_password" {
+  description = "PostgreSQL password for auth databases (Hydra and Kratos)"
   type        = string
   sensitive   = true
 }
@@ -92,6 +104,23 @@ variable "hydra_salt" {
   description = "Hydra pairwise salt (32+ chars)"
   type        = string
   sensitive   = true
+}
+
+variable "kratos_secret" {
+  description = "Kratos secrets key (32+ chars)"
+  type        = string
+  sensitive   = true
+}
+
+variable "kratos_identities" {
+  description = "List of Kratos identities to create"
+  type = list(object({
+    email      = string
+    first_name = string
+    last_name  = string
+  }))
+  sensitive = true
+  default   = []
 }
 
 # Talos Linux Configuration

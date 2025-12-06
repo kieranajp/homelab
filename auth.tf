@@ -1,22 +1,3 @@
-# PostgreSQL database for Hydra
-resource "helm_release" "hydra_postgresql" {
-  name       = "hydra-postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "postgresql"
-  version    = "15.2.5"
-  namespace  = "auth"
-  timeout    = 60
-  atomic     = true
-
-  values = [
-    templatefile("${path.module}/values/postgresql.yaml", {
-      postgres_password = var.hydra_postgres_password
-    })
-  ]
-
-  depends_on = [kubernetes_namespace.namespaces]
-}
-
 # Hydra database migration job
 resource "kubernetes_job" "hydra_migration" {
   metadata {
@@ -39,14 +20,14 @@ resource "kubernetes_job" "hydra_migration" {
 
           env {
             name  = "DSN"
-            value = "postgres://postgres:${var.hydra_postgres_password}@hydra-postgresql:5432/hydra?sslmode=disable"
+            value = "postgres://postgres:${var.auth_postgres_password}@auth-postgresql:5432/hydra?sslmode=disable"
           }
         }
       }
     }
   }
 
-  depends_on = [helm_release.hydra_postgresql]
+  depends_on = [kubernetes_stateful_set.auth_postgres]
 }
 
 # Ory Hydra OAuth2 server
@@ -61,7 +42,7 @@ resource "helm_release" "hydra" {
 
   values = [
     templatefile("${path.module}/values/hydra.yaml", {
-      postgres_password    = var.hydra_postgres_password
+      postgres_password    = var.auth_postgres_password
       hydra_system_secret  = var.hydra_system_secret
       hydra_cookie_secret  = var.hydra_cookie_secret
       hydra_salt          = var.hydra_salt
@@ -109,14 +90,15 @@ resource "kubernetes_job" "hydra_client_setup" {
           args = [
             "-c",
             <<-EOT
-              # Wait for Hydra to be ready
-              until hydra --endpoint http://hydra-admin:4445 version; do
+              # Wait for Hydra to be ready using health endpoint
+              until wget -q --spider http://hydra-admin:4445/health/ready; do
                 echo "Waiting for Hydra..."
                 sleep 5
               done
 
               # Create MCP client for client credentials flow
-              hydra --endpoint http://hydra-admin:4445 create oauth2-client \
+              hydra create client \
+                --endpoint http://hydra-admin:4445 \
                 --id mcp-client \
                 --name "MCP HTTP Client" \
                 --grant-type client_credentials \
@@ -132,4 +114,152 @@ resource "kubernetes_job" "hydra_client_setup" {
   }
 
   depends_on = [helm_release.hydra]
+}
+
+# Kratos database migration job
+resource "kubernetes_job" "kratos_migration" {
+  metadata {
+    name      = "kratos-migration"
+    namespace = "auth"
+  }
+
+  spec {
+    template {
+      metadata {}
+      spec {
+        restart_policy = "OnFailure"
+
+        container {
+          name  = "kratos-migration"
+          image = "oryd/kratos:v1.3.0"
+
+          command = ["kratos"]
+          args = ["migrate", "sql", "-e", "--yes"]
+
+          env {
+            name  = "DSN"
+            value = "postgres://postgres:${var.auth_postgres_password}@auth-postgresql:5432/kratos?sslmode=disable"
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [kubernetes_stateful_set.auth_postgres]
+}
+
+# Ory Kratos identity management
+resource "helm_release" "kratos" {
+  name       = "kratos"
+  repository = "https://k8s.ory.sh/helm/charts"
+  chart      = "kratos"
+  version    = "0.47.0"
+  namespace  = "auth"
+  timeout    = 120
+  atomic     = true
+
+  values = [
+    templatefile("${path.module}/values/kratos.yaml", {
+      postgres_password    = var.auth_postgres_password
+      kratos_secret        = var.kratos_secret
+      google_client_id     = var.google_client_id
+      google_client_secret = var.google_client_secret
+    })
+  ]
+
+  depends_on = [kubernetes_job.kratos_migration]
+}
+
+# Kratos selfservice UI
+resource "helm_release" "kratos_selfservice_ui" {
+  name       = "kratos-selfservice-ui"
+  repository = "https://k8s.ory.sh/helm/charts"
+  chart      = "kratos-selfservice-ui-node"
+  version    = "0.33.0"
+  namespace  = "auth"
+
+  values = [
+    yamlencode({
+      kratosPublicUrl = "http://kratos-public:4433"
+      baseUrl         = "https://kratos.kieranajp.uk/ui"
+      deployment = {
+        extraVolumes = [{
+          name     = "npm-cache"
+          emptyDir = {}
+        }]
+        extraVolumeMounts = [{
+          name      = "npm-cache"
+          mountPath = "/home/node/.npm"
+        }]
+      }
+    })
+  ]
+
+  depends_on = [helm_release.kratos]
+}
+
+# Identity import job
+resource "kubernetes_job" "kratos_identity_import" {
+  count = length(var.kratos_identities) > 0 ? 1 : 0
+
+  metadata {
+    name      = "kratos-identity-import-${substr(sha256(jsonencode(var.kratos_identities)), 0, 8)}"
+    namespace = "auth"
+  }
+
+  spec {
+    template {
+      metadata {}
+      spec {
+        restart_policy = "OnFailure"
+
+        container {
+          name  = "identity-import"
+          image = "oryd/kratos:v1.3.0"
+
+          command = ["/bin/sh"]
+          args = [
+            "-c",
+            <<-EOT
+              for identity in /identities/*.json; do
+                echo "Importing $identity..."
+                kratos import identities "$identity" --endpoint http://kratos-admin:4434 || true
+              done
+            EOT
+          ]
+
+          volume_mount {
+            name       = "identities"
+            mount_path = "/identities"
+          }
+        }
+
+        volume {
+          name = "identities"
+          config_map {
+            name = kubernetes_config_map.kratos_identities[0].metadata[0].name
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [helm_release.kratos]
+}
+
+resource "kubernetes_config_map" "kratos_identities" {
+  count = length(var.kratos_identities) > 0 ? 1 : 0
+
+  metadata {
+    name      = "kratos-identities"
+    namespace = "auth"
+  }
+
+  data = {
+    for idx, identity in var.kratos_identities :
+    "identity-${idx}.json" => jsonencode({
+      schema_id = "default"
+      traits    = identity
+    })
+  }
 }

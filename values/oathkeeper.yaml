@@ -1,4 +1,23 @@
 oathkeeper:
+  accessRules: |
+    - id: "browser-auth"
+      match:
+        url: "<.*>"
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+      authenticators:
+        - handler: cookie_session
+      authorizer:
+        handler: allow
+      mutators:
+        - handler: header
+          config:
+            headers:
+              X-User: "{{ print .Subject }}"
+      errors:
+        - handler: redirect
+          config:
+            to: https://kratos.kieranajp.uk/self-service/login/browser
+
   config:
     serve:
       proxy:
@@ -6,37 +25,27 @@ oathkeeper:
       api:
         port: 4456
 
-    access_rules:
-      inline: |
-        [
-          {
-            "id": "api-access",
-            "match": {
-              "url": "<.*>",
-              "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
-            },
-            "authenticators": [
-              {
-                "handler": "oauth2_introspection"
-              }
-            ],
-            "authorizer": {
-              "handler": "allow"
-            },
-            "mutators": [
-              {
-                "handler": "header"
-              }
-            ]
-          }
-        ]
-
     authenticators:
-      oauth2_introspection:
+      cookie_session:
         enabled: true
         config:
-          introspection_url: http://hydra-admin:4445/admin/oauth2/introspect
-          scope_strategy: wildcard
+          check_session_url: http://kratos-public:4433/sessions/whoami
+          preserve_path: true
+          extra_from: "@this"
+          subject_from: "identity.id"
+          only:
+            - ory_kratos_session
+          forward_http_headers:
+            - Cookie
+            - Authorization
+      jwt:
+        enabled: true
+        config:
+          jwks_urls:
+            - http://hydra-public:4444/.well-known/jwks.json
+          scope_strategy: exact
+      noop:
+        enabled: true
 
     authorizers:
       allow:
@@ -53,8 +62,12 @@ oathkeeper:
 
     errors:
       fallback:
-        - json
+        - redirect
       handlers:
+        redirect:
+          enabled: true
+          config:
+            to: https://kratos.kieranajp.uk/self-service/login/browser
         json:
           enabled: true
           config:
