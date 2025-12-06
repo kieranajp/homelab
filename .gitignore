@@ -1,4 +1,11 @@
-k3s-config
+# Terraform
+.terraform
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.*
+
+# Talos
 talos-kubeconfig
 talosconfig
-*.backup
