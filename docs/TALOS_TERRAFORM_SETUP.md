@@ -35,7 +35,7 @@ Update the Talos-specific variables:
 
 ```hcl
 # Talos Linux configuration
-talos_version          = "v1.9.0"
+talos_version          = "v1.11.5"
 cluster_name           = "seldon"
 talos_controlplane_ip  = "192.168.1.57"  # YOUR TALOS VM IP
 talos_hostname         = "talos-cp1"
@@ -191,11 +191,11 @@ talosctl version --nodes 192.168.1.57
 # Upgrade Talos OS
 talosctl upgrade \
   --nodes 192.168.1.57 \
-  --image ghcr.io/siderolabs/installer:v1.9.1
+  --image ghcr.io/siderolabs/installer:v1.11.6
 
 # Update Terraform variable after successful upgrade
 # In terraform.tfvars:
-talos_version = "v1.9.1"
+talos_version = "v1.11.6"
 
 # Apply to update stored config
 tofu apply

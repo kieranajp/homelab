@@ -1,2 +1,4 @@
 k3s-config
+talos-kubeconfig
+talosconfig
 *.backup

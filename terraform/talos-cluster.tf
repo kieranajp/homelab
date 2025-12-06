@@ -22,13 +22,16 @@ data "talos_machine_configuration" "controlplane" {
   config_patches = [
     yamlencode({
       cluster = {
+        # Single-node cluster: allow workloads on control plane
+        allowSchedulingOnControlPlanes = true
+
         network = {
           cni = {
-            name = "none" # We'll install Cilium or Calico via Helm if needed
+            name = "none" # We'll install Cilium via Helm
           }
         }
         proxy = {
-          disabled = true # Disable kube-proxy (modern CNIs handle this)
+          disabled = true # Disable kube-proxy (Cilium handles this)
         }
       }
       machine = {
@@ -70,7 +73,7 @@ resource "talos_machine_bootstrap" "this" {
 }
 
 # Extract kubeconfig for use by Helm/Kubernetes providers
-data "talos_cluster_kubeconfig" "this" {
+resource "talos_cluster_kubeconfig" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
   node                 = var.talos_controlplane_ip
 
@@ -81,18 +84,25 @@ data "talos_cluster_kubeconfig" "this" {
 
 # Write kubeconfig to local file (optional - for manual kubectl access)
 resource "local_file" "kubeconfig" {
-  content         = data.talos_cluster_kubeconfig.this.kubeconfig_raw
+  content         = talos_cluster_kubeconfig.this.kubeconfig_raw
   filename        = "${path.root}/talos-kubeconfig"
   file_permission = "0600"
 
   depends_on = [
-    data.talos_cluster_kubeconfig.this
+    talos_cluster_kubeconfig.this
   ]
+}
+
+# Generate talosconfig for talosctl CLI access
+data "talos_client_configuration" "this" {
+  cluster_name         = var.cluster_name
+  client_configuration = talos_machine_secrets.this.client_configuration
+  endpoints            = [var.talos_controlplane_ip]
 }
 
 # Write talosconfig to local file (for talosctl access)
 resource "local_file" "talosconfig" {
-  content         = talos_machine_secrets.this.client_configuration.talos_config
+  content         = data.talos_client_configuration.this.talos_config
   filename        = "${path.root}/talosconfig"
   file_permission = "0600"
 }

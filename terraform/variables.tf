@@ -98,7 +98,7 @@ variable "hydra_salt" {
 variable "talos_version" {
   description = "Talos Linux version"
   type        = string
-  default     = "v1.9.0"
+  default     = "v1.11.5"
 }
 
 variable "cluster_name" {

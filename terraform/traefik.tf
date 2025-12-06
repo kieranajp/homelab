@@ -5,7 +5,7 @@ resource "helm_release" "traefik" {
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
-  version    = "~> 32.0" # Uses Traefik v3
+  version    = "37.4.0"
   namespace  = "kube-system"
   timeout    = 300
   atomic     = true
@@ -30,20 +30,17 @@ resource "helm_release" "traefik" {
         "--api.insecure=true"
       ]
 
-      # Port configuration
+      # Port configuration - use hostPort for direct :80/:443 access
       ports = {
         web = {
-          port     = 80
-          expose   = true
+          port = 8000
           exposedPort = 80
+          hostPort = 80  # Bind directly to host's port 80
         }
         websecure = {
-          port     = 443
-          expose   = true
+          port = 8443
           exposedPort = 443
-        }
-        traefik = {
-          expose = true
+          hostPort = 443  # Bind directly to host's port 443
         }
       }
 
@@ -58,9 +55,9 @@ resource "helm_release" "traefik" {
         }
       }
 
-      # Service configuration
+      # Service configuration - ClusterIP since we're using hostPort
       service = {
-        type = "LoadBalancer"
+        type = "ClusterIP"
       }
     })
   ]

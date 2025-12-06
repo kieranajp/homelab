@@ -8,7 +8,19 @@ resource "kubernetes_namespace" "namespaces" {
 
   metadata {
     name = each.key
+
+    # Monitoring namespace needs privileged pod security for node-exporter
+    labels = each.key == "monitoring" ? {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/audit"   = "privileged"
+      "pod-security.kubernetes.io/warn"    = "privileged"
+    } : {}
   }
+
+  # Wait for CNI to be ready before creating namespaces
+  depends_on = [
+    helm_release.cilium
+  ]
 }
 
 resource "kubernetes_secret" "ghcr_secret" {
@@ -32,4 +44,8 @@ resource "kubernetes_secret" "ghcr_secret" {
       }
     })
   }
+
+  depends_on = [
+    kubernetes_namespace.namespaces
+  ]
 }
