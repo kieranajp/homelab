@@ -93,3 +93,28 @@ variable "hydra_salt" {
   type        = string
   sensitive   = true
 }
+
+# Talos Linux Configuration
+variable "talos_version" {
+  description = "Talos Linux version"
+  type        = string
+  default     = "v1.9.0"
+}
+
+variable "cluster_name" {
+  description = "Kubernetes cluster name"
+  type        = string
+  default     = "seldon"
+}
+
+variable "talos_controlplane_ip" {
+  description = "IP address of Talos controlplane node"
+  type        = string
+  default     = "192.168.1.57"
+}
+
+variable "talos_hostname" {
+  description = "Hostname for Talos node"
+  type        = string
+  default     = "talos-cp1"
+}
