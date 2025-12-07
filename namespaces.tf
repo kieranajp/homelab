@@ -9,8 +9,8 @@ resource "kubernetes_namespace" "namespaces" {
   metadata {
     name = each.key
 
-    # Monitoring namespace needs privileged pod security for node-exporter
-    labels = each.key == "monitoring" ? {
+    # Monitoring/homelab namespaces need privileged pod security for host access
+    labels = contains(["monitoring", "homelab"], each.key) ? {
       "pod-security.kubernetes.io/enforce" = "privileged"
       "pod-security.kubernetes.io/audit"   = "privileged"
       "pod-security.kubernetes.io/warn"    = "privileged"

@@ -1,6 +1,8 @@
 controller:
   type: Deployment
 
+deploymentStrategy: Recreate
+
 ingress:
   external: true
 
@@ -8,3 +10,44 @@ configuration:
   enabled: true
   trusted_proxies:
     - "10.0.0.0/8"
+
+additionalPorts:
+  - name: sonos
+    containerPort: 1400
+    hostPort: 1400
+    protocol: TCP
+
+persistence:
+  enabled: true
+  size: 5Gi
+
+initContainers:
+  - name: install-custom-components
+    image: alpine/git:latest
+    env:
+      - name: REPOS
+        value: ""
+    command:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /config/custom_components
+
+        # HACS needs release zip, not git clone
+        wget -O /tmp/hacs.zip https://github.com/hacs/integration/releases/latest/download/hacs.zip
+        unzip -o /tmp/hacs.zip -d /config/custom_components/hacs
+
+        # Clone any additional repos
+        echo "$REPOS" | while read -r repo; do
+          [ -z "$repo" ] && continue
+          name=$(basename "$repo" .git)
+          git clone --depth 1 "$repo" "/tmp/$name"
+          if [ -d "/tmp/$name/custom_components" ]; then
+            cp -r "/tmp/$name"/custom_components/* /config/custom_components/
+          elif [ -d "/tmp/$name/$name" ]; then
+            cp -r "/tmp/$name/$name" /config/custom_components/
+          fi
+        done
+    volumeMounts:
+      - name: home-assistant-pvc
+        mountPath: /config
