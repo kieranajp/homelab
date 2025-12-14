@@ -1,5 +1,16 @@
 # Traefik Ingress Controller
 
+resource "kubernetes_secret" "cloudflare_api_token" {
+  metadata {
+    name      = "cloudflare-api-token"
+    namespace = "kube-system"
+  }
+
+  data = {
+    api-token = var.cloudflare_api_token
+  }
+}
+
 resource "helm_release" "traefik" {
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
@@ -32,14 +43,21 @@ resource "helm_release" "traefik" {
       # Port configuration - use hostPort for direct :80/:443 access
       ports = {
         web = {
-          port = 8000
+          port        = 8000
           exposedPort = 80
-          hostPort = 80  # Bind directly to host's port 80
+          hostPort    = 80
+          redirections = {
+            entryPoint = {
+              to        = "websecure"
+              scheme    = "https"
+              permanent = true
+            }
+          }
         }
         websecure = {
-          port = 8443
+          port        = 8443
           exposedPort = 443
-          hostPort = 443  # Bind directly to host's port 443
+          hostPort    = 443
         }
       }
 
@@ -58,8 +76,41 @@ resource "helm_release" "traefik" {
       service = {
         type = "ClusterIP"
       }
+
+      # Persistence for ACME certificates
+      persistence = {
+        enabled = true
+        size    = "128Mi"
+      }
+
+      # Cloudflare API token for DNS-01 challenge
+      env = [{
+        name = "CF_DNS_API_TOKEN"
+        valueFrom = {
+          secretKeyRef = {
+            name = "cloudflare-api-token"
+            key  = "api-token"
+          }
+        }
+      }]
+
+      # Let's Encrypt certificate resolver
+      certificatesResolvers = {
+        letsencrypt = {
+          acme = {
+            email   = var.letsencrypt_email
+            storage = "/data/acme.json"
+            dnsChallenge = {
+              provider = "cloudflare"
+            }
+          }
+        }
+      }
     })
   ]
 
-  depends_on = [kubernetes_namespace.namespaces]
+  depends_on = [
+    kubernetes_namespace.namespaces,
+    kubernetes_secret.cloudflare_api_token
+  ]
 }

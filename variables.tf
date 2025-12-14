@@ -10,16 +10,9 @@ variable "k8s_context" {
   default     = "seldon"
 }
 
-variable "tailscale_oauth_client_id" {
-  description = "Tailscale OAuth client ID"
+variable "cluster_public_ip" {
+  description = "Public IP of cluster"
   type        = string
-  sensitive   = true
-}
-
-variable "tailscale_oauth_client_secret" {
-  description = "Tailscale OAuth client secret"
-  type        = string
-  sensitive   = true
 }
 
 variable "cloudflare_account_id" {
@@ -56,6 +49,11 @@ variable "cloudflare_zone_id" {
   description = "Cloudflare zone ID for kieranajp.uk domain"
   type        = string
   sensitive   = true
+}
+
+variable "letsencrypt_email" {
+  description = "Email address for Let's Encrypt certificate notifications"
+  type        = string
 }
 
 variable "github_token" {

@@ -4,11 +4,11 @@ k8s_context     = "seldon"
 # Talos Linux configuration
 talos_version          = "v1.11.5"
 cluster_name           = "seldon"
-talos_controlplane_ip  = "192.168.1.57"  # Update with your Talos VM IP
+cluster_public_ip      = ""
+talos_controlplane_ip  = ""  # Update with your Talos VM IP
 talos_hostname         = "talos-cp1"
 
-tailscale_oauth_client_id     = ""
-tailscale_oauth_client_secret = ""
+letsencrypt_email = ""
 
 cloudflare_api_token      = ""
 cloudflare_account_id     = ""

@@ -7,7 +7,7 @@ metadata:
   namespace: {{ $route.namespace }}
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
   - match: {{ $route.match | quote }}
     kind: Rule
@@ -24,4 +24,6 @@ spec:
       namespace: {{ $route.namespace }}
     {{- end }}
     {{- end }}
+  tls:
+    certResolver: letsencrypt
 {{- end }}
