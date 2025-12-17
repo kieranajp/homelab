@@ -1,0 +1,14 @@
+image:
+  repository: syncthing/syncthing
+  tag: "1.29"
+
+persistence:
+  size: 50Gi
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi

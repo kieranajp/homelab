@@ -14,6 +14,14 @@ ingressRoutes:
     service:
       name: home-assistant
       port: 8080
+
+  syncthing:
+    match: Host("syncthing.kieranajp.uk")
+    middlewares:
+    - ory-auth
+    service:
+      name: syncthing
+      port: 8384
 %{ endif ~}
 
 %{ if namespace == "auth" ~}
