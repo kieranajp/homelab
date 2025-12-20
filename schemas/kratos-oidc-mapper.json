@@ -1,0 +1,11 @@
+{
+  "identity": {
+    "traits": {
+      "email": "assertion.email",
+      "name": {
+        "first": "assertion.given_name",
+        "last": "assertion.family_name"
+      }
+    }
+  }
+}

@@ -164,6 +164,8 @@ resource "helm_release" "kratos" {
       kratos_secret        = var.kratos_secret
       google_client_id     = var.google_client_id
       google_client_secret = var.google_client_secret
+      identity_schema      = base64encode(file("${path.module}/schemas/kratos-identity.json"))
+      oidc_mapper          = base64encode(file("${path.module}/schemas/kratos-oidc-mapper.json"))
     })
   ]
 

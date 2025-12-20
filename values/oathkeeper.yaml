@@ -16,7 +16,7 @@ oathkeeper:
       errors:
         - handler: redirect
           config:
-            to: https://kratos.kieranajp.uk/self-service/login/browser
+            to: https://kratos.kieranajp.uk/self-service/login/browser?return_to={{ .RequestURL }}
 
   config:
     serve:
@@ -67,7 +67,7 @@ oathkeeper:
         redirect:
           enabled: true
           config:
-            to: https://kratos.kieranajp.uk/self-service/login/browser
+            to: https://kratos.kieranajp.uk/self-service/login/browser?return_to={{ .RequestURL }}
         json:
           enabled: true
           config:
