@@ -145,3 +145,14 @@ variable "talos_hostname" {
   type        = string
   default     = "talos-cp1"
 }
+
+variable "nfs" {
+  description = "NFS configuration for media storage"
+  type = object({
+    server         = string
+    tv_path        = string
+    downloads_path = string
+    puid           = number
+    pgid           = number
+  })
+}

@@ -1,0 +1,20 @@
+image:
+  repository: linuxserver/prowlarr
+  tag: latest
+
+timezone: Europe/Berlin
+
+persistence:
+  size: 1Gi
+
+ingress:
+  enabled: true
+  match: Host(`prowlarr.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

@@ -1,0 +1,20 @@
+image:
+  repository: linuxserver/sonarr
+  tag: latest
+
+timezone: Europe/Berlin
+
+persistence:
+  size: 1Gi
+
+ingress:
+  enabled: true
+  match: Host(`sonarr.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
