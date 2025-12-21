@@ -37,6 +37,12 @@ configmap:
             provider: google
             target: _blank
 
+        - openweathermap:
+            label: Yaiza
+            latitude: 28.9563
+            longitude: -13.7625
+            units: metric
+
       services.yaml: |
         ---
         # For configuration options and examples, please see:
@@ -53,25 +59,59 @@ configmap:
                 href: http://schwengel.local:32400
                 description: Media server
                 icon: plex.png
+            - Sonarr:
+                href: https://sonarr.kieranajp.uk
+                description: TV series management
+                icon: sonarr.png
+            - Prowlarr:
+                href: https://prowlarr.kieranajp.uk
+                description: Indexer manager
+                icon: prowlarr.png
 
-        - NAS:
+        - Infrastructure:
+            - Homepage:
+                href: https://home.kieranajp.uk
+                description: This dashboard
+                icon: homepage.png
+            - Grafana:
+                href: https://grafana.kieranajp.uk
+                description: Metrics & monitoring
+                icon: grafana.png
+            - SyncThing:
+                href: https://syncthing.kieranajp.uk
+                description: File synchronization
+                icon: syncthing.png
             - Synology:
                 href: http://schwengel.local:5001
                 description: Synology NAS
                 icon: synology.png
+
+        - Authentication:
+            - Kratos:
+                href: https://kratos.kieranajp.uk
+                description: Identity management
+                icon: ory.png
+            - Hydra:
+                href: https://hydra.kieranajp.uk
+                description: OAuth2 server
+                icon: ory.png
+            - MCP Server:
+                href: https://mcp.kieranajp.uk
+                description: MCP API server
+                icon: si-typescript
 
       bookmarks.yaml: |
         ---
         # For configuration options and examples, please see:
         # https://gethomepage.dev/latest/configs/bookmarks
 
-        - Kiery:
+        - Personal:
             - Kiery:
               - abbr: KP
                 icon: https://www.kieranajp.uk/favicon.svg
                 href: https://kieranajp.uk
-                description: "Kiery kiery"
-            - Github:
+                description: "Personal website"
+            - GitHub:
               - abbr: GH
                 icon: https://github.com/fluidicon.png
                 href: https://github.com/kieranajp
