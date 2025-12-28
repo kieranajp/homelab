@@ -1,0 +1,29 @@
+:root {
+  --ory-theme-background-canvas: #1b1d22;
+  --ory-theme-background-surface: #1b1d22;
+  --ory-theme-foreground-muted: #ffffff;
+  --ory-theme-foreground-default: #ffffff;
+  --ory-theme-primary: #00ffcc;
+  --ory-theme-accent: #00ffcc;
+}
+
+body {
+  background-color: #1b1d22;
+  color: #ffffff;
+}
+
+a {
+  color: #00ffcc;
+}
+
+button[type="submit"],
+.button--primary {
+  background-color: #00ffcc;
+  color: #1b1d22;
+  border: none;
+}
+
+button[type="submit"]:hover,
+.button--primary:hover {
+  background-color: #00ddaa;
+}

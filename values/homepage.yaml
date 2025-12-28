@@ -104,3 +104,8 @@ configmap:
                 icon: https://github.com/fluidicon.png
                 href: https://github.com/kieranajp
                 description: "Kieran's GitHub"
+            - NextDNS:
+              - abbr: ND
+                icon: https://nextdns.io/_next/static/media/logo-icon.cef64c1923c8924d6de76912bcdfe88b.png
+                href: https://my.nextdns.io
+                description: "Private DNS"

@@ -53,7 +53,10 @@ kratos:
           after:
             default_browser_return_url: https://home.kieranajp.uk
         registration:
-          enabled: false
+          enabled: true
+          ui_url: https://kratos.kieranajp.uk/ui/registration
+          after:
+            default_browser_return_url: https://home.kieranajp.uk
         logout:
           after:
             default_browser_return_url: https://home.kieranajp.uk

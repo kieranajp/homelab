@@ -164,12 +164,24 @@ resource "helm_release" "kratos" {
       kratos_secret        = var.kratos_secret
       google_client_id     = var.google_client_id
       google_client_secret = var.google_client_secret
-      identity_schema      = base64encode(file("${path.module}/schemas/kratos-identity.json"))
-      oidc_mapper          = base64encode(file("${path.module}/schemas/kratos-oidc-mapper.json"))
+      identity_schema      = base64encode(file("${path.module}/values/kratos/schemas/kratos-identity.json"))
+      oidc_mapper          = base64encode(file("${path.module}/values/kratos/schemas/kratos-oidc-mapper.json"))
     })
   ]
 
   depends_on = [kubernetes_job.kratos_migration]
+}
+
+# Kratos selfservice UI custom theme
+resource "kubernetes_config_map" "kratos_ui_theme" {
+  metadata {
+    name      = "kratos-ui-theme"
+    namespace = "auth"
+  }
+
+  data = {
+    "theme.css" = file("${path.module}/values/kratos/styles/kratos-theme.css")
+  }
 }
 
 # Kratos selfservice UI
@@ -185,19 +197,34 @@ resource "helm_release" "kratos_selfservice_ui" {
       kratosPublicUrl = "http://kratos-public:4433"
       baseUrl         = "https://kratos.kieranajp.uk/ui"
       deployment = {
-        extraVolumes = [{
-          name     = "npm-cache"
-          emptyDir = {}
-        }]
-        extraVolumeMounts = [{
-          name      = "npm-cache"
-          mountPath = "/home/node/.npm"
-        }]
+        extraVolumes = [
+          {
+            name     = "npm-cache"
+            emptyDir = {}
+          },
+          {
+            name = "theme"
+            configMap = {
+              name = "kratos-ui-theme"
+            }
+          }
+        ]
+        extraVolumeMounts = [
+          {
+            name      = "npm-cache"
+            mountPath = "/home/node/.npm"
+          },
+          {
+            name      = "theme"
+            mountPath = "/app/public/theme.css"
+            subPath   = "theme.css"
+          }
+        ]
       }
     })
   ]
 
-  depends_on = [helm_release.kratos]
+  depends_on = [helm_release.kratos, kubernetes_config_map.kratos_ui_theme]
 }
 
 # Identity import job
