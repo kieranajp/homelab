@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: calibre-web-automated
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - name: web
+              containerPort: 8083
+          env:
+            - name: PUID
+              value: "{{ .Values.puid }}"
+            - name: PGID
+              value: "{{ .Values.pgid }}"
+            - name: TZ
+              value: "{{ .Values.timezone }}"
+            - name: DOCKER_MODS
+              value: "linuxserver/mods:universal-calibre"
+            {{- if .Values.networkShareMode }}
+            - name: NETWORK_SHARE_MODE
+              value: "true"
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: ingest
+              mountPath: /cwa-book-ingest
+            - name: library
+              mountPath: /calibre-library
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-config
+        - name: ingest
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.booksPath | quote }}
+        - name: library
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.booksPath | quote }}

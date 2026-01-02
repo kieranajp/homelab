@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: lazylibrarian
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - name: web
+              containerPort: 5299
+          env:
+            - name: PUID
+              value: "{{ .Values.puid }}"
+            - name: PGID
+              value: "{{ .Values.pgid }}"
+            - name: TZ
+              value: "{{ .Values.timezone }}"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: books
+              mountPath: /books
+            - name: downloads
+              mountPath: /downloads
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: cwa-ingest
+              mountPath: /cwa-ingest
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-config
+        - name: books
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.booksPath | quote }}
+        - name: downloads
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.downloadsPath | quote }}
+        - name: scripts
+          configMap:
+            name: {{ .Release.Name }}-scripts
+            defaultMode: 0755
+        - name: cwa-ingest
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.booksPath | quote }}
+            {{- if .Values.nfs.ingestSubPath }}
+            # Append subpath if specified (e.g., /incoming)
+            {{- end }}

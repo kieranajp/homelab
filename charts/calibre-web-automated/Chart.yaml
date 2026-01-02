@@ -1,0 +1,4 @@
+apiVersion: v2
+name: calibre-web-automated
+version: 0.1.0
+description: Calibre-Web-Automated ebook library and Kindle delivery
