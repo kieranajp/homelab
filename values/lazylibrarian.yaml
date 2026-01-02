@@ -1,0 +1,20 @@
+image:
+  repository: linuxserver/lazylibrarian
+  tag: latest
+
+timezone: Europe/Berlin
+
+persistence:
+  size: 2Gi
+
+ingress:
+  enabled: true
+  match: Host(`lazylibrarian.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

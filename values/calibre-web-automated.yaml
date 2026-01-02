@@ -1,0 +1,23 @@
+image:
+  repository: crocodilestick/calibre-web-automated
+  tag: latest
+
+timezone: Europe/Berlin
+
+# Enable network share mode for NFS storage
+networkShareMode: true
+
+persistence:
+  configSize: 5Gi
+
+ingress:
+  enabled: true
+  match: Host(`calibre.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
