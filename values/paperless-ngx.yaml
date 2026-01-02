@@ -2,11 +2,11 @@ image:
   repository: ghcr.io/paperless-ngx/paperless-ngx
   tag: latest
 
-timezone: Europe/Berlin
+timezone: Atlantic/Canary
 
 paperless:
   url: https://paperless.kieranajp.uk
-  ocrLanguage: eng+deu
+  ocrLanguage: eng+spa
   secretKey: changeme-please-set-in-terraform
 
 persistence:
