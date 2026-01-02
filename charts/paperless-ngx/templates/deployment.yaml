@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: paperless-ngx
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - name: web
+              containerPort: 8000
+          env:
+            - name: PAPERLESS_URL
+              value: "{{ .Values.paperless.url }}"
+            - name: PAPERLESS_TIME_ZONE
+              value: "{{ .Values.timezone }}"
+            - name: PAPERLESS_OCR_LANGUAGE
+              value: "{{ .Values.paperless.ocrLanguage }}"
+            - name: PAPERLESS_REDIS
+              value: "redis://{{ .Release.Name }}-redis:6379"
+            - name: USERMAP_UID
+              value: "{{ .Values.puid }}"
+            - name: USERMAP_GID
+              value: "{{ .Values.pgid }}"
+            - name: PAPERLESS_SECRET_KEY
+              value: "{{ .Values.paperless.secretKey }}"
+          volumeMounts:
+            - name: storage
+              mountPath: /usr/src/paperless/data
+              subPath: data
+            - name: storage
+              mountPath: /usr/src/paperless/media
+              subPath: media
+            - name: storage
+              mountPath: /usr/src/paperless/export
+              subPath: export
+            - name: storage
+              mountPath: /usr/src/paperless/consume
+              subPath: consume
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}

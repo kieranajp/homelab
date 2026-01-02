@@ -13,3 +13,42 @@ server:
         - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
           action: keep
           regex: prometheus-node-exporter
+
+    # External HTTPS endpoints (public or with own auth)
+    - job_name: blackbox-http-external
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+        - targets:
+          - https://homeassistant.kieranajp.uk
+          - https://kieranajp.uk
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
+
+    # Internal cluster services (bypasses Ory auth)
+    - job_name: blackbox-http-internal
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+        - targets:
+          - http://homepage.homelab.svc.cluster.local:3000
+          - http://sonarr.homelab.svc.cluster.local:8989
+          - http://prowlarr.homelab.svc.cluster.local:9696
+          - http://paperless-ngx.homelab.svc.cluster.local:8000
+          - http://syncthing.homelab.svc.cluster.local:8384
+          - http://mcp-server.homelab.svc.cluster.local:8080
+          - http://grafana.monitoring.svc.cluster.local:80
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115

@@ -25,3 +25,13 @@ resource "helm_release" "grafana" {
 
   values = [file("${path.module}/values/grafana.yaml")]
 }
+
+resource "helm_release" "blackbox_exporter" {
+  name       = "blackbox-exporter"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "prometheus-blackbox-exporter"
+  version    = "11.6.1"
+  namespace  = "monitoring"
+
+  values = [file("${path.module}/values/blackbox-exporter.yaml")]
+}
