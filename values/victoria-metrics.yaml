@@ -13,3 +13,26 @@ server:
         - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
           action: keep
           regex: prometheus-node-exporter
+
+    - job_name: blackbox-http
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      static_configs:
+        - targets:
+          - https://home.kieranajp.uk
+          - https://grafana.kieranajp.uk
+          - https://homeassistant.kieranajp.uk
+          - https://sonarr.kieranajp.uk
+          - https://prowlarr.kieranajp.uk
+          - https://paperless.kieranajp.uk
+          - https://syncthing.kieranajp.uk
+          - https://mcp.kieranajp.uk
+          - https://recipes.kieranajp.uk
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter:9115

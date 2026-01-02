@@ -55,6 +55,10 @@ configmap:
                 href: https://recipes.kieranajp.uk
                 description: Recipe manager
                 icon: mdi-notebook-edit-outline
+            - Paperless-ngx:
+                href: https://paperless.kieranajp.uk
+                description: Document management
+                icon: paperless-ngx.png
 
         - Media:
             - Plex:

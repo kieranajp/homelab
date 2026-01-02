@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: paperless-ngx
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - name: web
+              containerPort: 8000
+          env:
+            - name: PAPERLESS_URL
+              value: "{{ .Values.paperless.url }}"
+            - name: PAPERLESS_TIME_ZONE
+              value: "{{ .Values.timezone }}"
+            - name: PAPERLESS_OCR_LANGUAGE
+              value: "{{ .Values.paperless.ocrLanguage }}"
+            - name: PAPERLESS_REDIS
+              value: "redis://{{ .Release.Name }}-redis:6379"
+            - name: USERMAP_UID
+              value: "{{ .Values.puid }}"
+            - name: USERMAP_GID
+              value: "{{ .Values.pgid }}"
+            - name: PAPERLESS_SECRET_KEY
+              value: "{{ .Values.paperless.secretKey }}"
+          volumeMounts:
+            - name: data
+              mountPath: /usr/src/paperless/data
+            - name: media
+              mountPath: /usr/src/paperless/media
+            - name: export
+              mountPath: /usr/src/paperless/export
+            - name: consume
+              mountPath: /usr/src/paperless/consume
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-media
+        - name: export
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-export
+        - name: consume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-consume

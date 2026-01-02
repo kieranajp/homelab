@@ -1,0 +1,28 @@
+image:
+  repository: ghcr.io/paperless-ngx/paperless-ngx
+  tag: latest
+
+timezone: Europe/Berlin
+
+paperless:
+  url: https://paperless.kieranajp.uk
+  ocrLanguage: eng+deu
+  secretKey: changeme-please-set-in-terraform
+
+persistence:
+  dataSize: 2Gi
+  mediaSize: 10Gi
+  exportSize: 2Gi
+  consumeSize: 5Gi
+
+ingress:
+  enabled: true
+  match: Host(`paperless.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi

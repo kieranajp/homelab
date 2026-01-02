@@ -36,3 +36,13 @@ kratos_identities = [
   },
   # Add more as needed
 ]
+
+paperless_secret_key = ""  # Generate with: openssl rand -base64 32
+
+nfs = {
+  server         = ""  # NFS server IP
+  tv_path        = "/path/to/tv"
+  downloads_path = "/path/to/downloads"
+  puid           = 1000
+  pgid           = 1000
+}

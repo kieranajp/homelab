@@ -156,3 +156,9 @@ variable "nfs" {
     pgid           = number
   })
 }
+
+variable "paperless_secret_key" {
+  description = "Secret key for Paperless-ngx (32+ chars)"
+  type        = string
+  sensitive   = true
+}
