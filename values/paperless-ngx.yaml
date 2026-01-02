@@ -10,10 +10,7 @@ paperless:
   secretKey: changeme-please-set-in-terraform
 
 persistence:
-  dataSize: 2Gi
-  mediaSize: 10Gi
-  exportSize: 2Gi
-  consumeSize: 5Gi
+  size: 10Gi
 
 ingress:
   enabled: true

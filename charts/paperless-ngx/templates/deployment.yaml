@@ -37,26 +37,21 @@ spec:
             - name: PAPERLESS_SECRET_KEY
               value: "{{ .Values.paperless.secretKey }}"
           volumeMounts:
-            - name: data
+            - name: storage
               mountPath: /usr/src/paperless/data
-            - name: media
+              subPath: data
+            - name: storage
               mountPath: /usr/src/paperless/media
-            - name: export
+              subPath: media
+            - name: storage
               mountPath: /usr/src/paperless/export
-            - name: consume
+              subPath: export
+            - name: storage
               mountPath: /usr/src/paperless/consume
+              subPath: consume
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: data
+        - name: storage
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-data
-        - name: media
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-media
-        - name: export
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-export
-        - name: consume
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-consume
+            claimName: {{ .Release.Name }}
