@@ -37,7 +37,9 @@ kratos_identities = [
 nfs = {
   server         = ""
   tv_path        = "/path/to/tv"
+  books_path     = "/path/to/ebooks"
   downloads_path = "/path/to/downloads"
+  docs_path      = "/path/to/docs"
   puid           = 1000
   pgid           = 1000
 }

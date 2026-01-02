@@ -10,6 +10,10 @@ resource "helm_release" "paperless_ngx" {
     yamlencode({
       puid = var.nfs.puid
       pgid = var.nfs.pgid
+      nfs = {
+        server   = var.nfs.server
+        docsPath = var.nfs.docs_path
+      }
       paperless = {
         secretKey = var.paperless_secret_key
       }

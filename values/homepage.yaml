@@ -73,6 +73,10 @@ configmap:
                 href: https://prowlarr.kieranajp.uk
                 description: Indexer manager
                 icon: prowlarr.png
+            - Transmission:
+                href: http://schwengel.local:9091/transmission/web/
+                description: Torrents
+                icon: transmission.png
 
         - Infrastructure:
             - Homepage:

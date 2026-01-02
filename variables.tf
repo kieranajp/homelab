@@ -129,6 +129,7 @@ variable "nfs" {
     tv_path        = string
     books_path     = string
     downloads_path = string
+    docs_path      = string
     puid           = number
     pgid           = number
   })

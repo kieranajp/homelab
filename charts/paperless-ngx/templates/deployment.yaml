@@ -53,5 +53,6 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: storage
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}
+          nfs:
+            server: {{ .Values.nfs.server }}
+            path: {{ .Values.nfs.docsPath | quote }}
