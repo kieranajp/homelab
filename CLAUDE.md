@@ -36,6 +36,7 @@ The infrastructure is single-layer, fully declarative:
 - **Monitoring namespace**: Pod security set to `privileged` (node-exporter needs host access)
 - **Storage**: `WaitForFirstConsumer` binding - PVCs only bind when pods start
 - **Cilium bootstrap**: Uses `k8sServiceHost` to connect directly to node IP, not service IP
+- **Cloudflare grey cloud**: DNS records are not proxied (grey cloud, not orange). This is because Spanish ISPs (particularly Telefónica/Movistar) block Cloudflare's proxy IP ranges due to La Liga court orders targeting piracy. Direct routing via port forwarding (80/443) bypasses this. The `favonia/cloudflare-ddns` deployment keeps DNS records updated with the dynamic public IP.
 
 ### Talos Specifics
 - **Node IP**: 192.168.1.57

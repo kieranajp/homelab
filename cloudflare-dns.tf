@@ -1,6 +1,6 @@
 # Cloudflare DNS Records
 
-resource "cloudflare_record" "tunnel_subdomains" {
+resource "cloudflare_record" "wildcard_subdomain" {
   zone_id = var.cloudflare_zone_id
   name    = "*"
   content = var.cluster_public_ip

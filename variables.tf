@@ -15,32 +15,8 @@ variable "cluster_public_ip" {
   type        = string
 }
 
-variable "cloudflare_account_id" {
-  description = "Cloudflare account ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "cloudflare_tunnel_id" {
-  description = "Cloudflare tunnel ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "cloudflare_tunnel_name" {
-  description = "Cloudflare tunnel name"
-  type        = string
-  default     = "homelab-tunnel"
-}
-
-variable "cloudflare_tunnel_secret" {
-  description = "Cloudflare tunnel secret"
-  type        = string
-  sensitive   = true
-}
-
 variable "cloudflare_api_token" {
-  description = "Cloudflare API token for managing DNS and tunnel routes"
+  description = "Cloudflare API token for managing DNS records"
   type        = string
   sensitive   = true
 }

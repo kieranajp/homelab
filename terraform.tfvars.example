@@ -1,48 +1,46 @@
-# Kubernetes configuration
-k8s_context     = "seldon"
+# Talos & Cluster
+k8s_context           = "seldon"
+talos_version         = "v1.11.5"
+cluster_name          = "seldon"
+cluster_public_ip     = ""
+talos_controlplane_ip = ""
+talos_hostname        = "talos-cp1"
 
-# Talos Linux configuration
-talos_version          = "v1.11.5"
-cluster_name           = "seldon"
-cluster_public_ip      = ""
-talos_controlplane_ip  = ""  # Update with your Talos VM IP
-talos_hostname         = "talos-cp1"
+# Cloudflare (DNS & DDNS)
+cloudflare_api_token = ""  # Scoped token with DNS edit permissions
+cloudflare_zone_id   = ""
 
+# TLS
 letsencrypt_email = ""
 
-cloudflare_api_token      = ""
-cloudflare_account_id     = ""
-cloudflare_zone_id        = ""
-cloudflare_tunnel_id      = ""
-cloudflare_tunnel_name    = ""
-cloudflare_tunnel_secret  = ""
-
+# Container Registry
 github_token = ""
 
-google_client_id = ""
-google_client_secret = ""
-cookie_secret = ""
-
+# Authentication (Ory Stack)
+google_client_id       = ""
+google_client_secret   = ""
+cookie_secret          = ""
 auth_postgres_password = ""
-hydra_system_secret = ""
-hydra_cookie_secret = ""
-hydra_salt = ""
-kratos_secret = ""
+hydra_system_secret    = ""  # 32+ chars
+hydra_cookie_secret    = ""  # 32+ chars
+hydra_salt             = ""  # 32+ chars
+kratos_secret          = ""  # 32+ chars
 kratos_identities = [
   {
     email      = "your@email.uk"
     first_name = "Your"
     last_name  = "Name"
   },
-  # Add more as needed
 ]
 
-paperless_secret_key = ""
-
+# Storage
 nfs = {
-  server         = ""  # NFS server IP
+  server         = ""
   tv_path        = "/path/to/tv"
   downloads_path = "/path/to/downloads"
   puid           = 1000
   pgid           = 1000
 }
+
+# Applications
+paperless_secret_key = ""
