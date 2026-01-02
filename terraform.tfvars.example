@@ -37,7 +37,7 @@ kratos_identities = [
   # Add more as needed
 ]
 
-paperless_secret_key = ""  # Generate with: openssl rand -base64 32
+paperless_secret_key = ""
 
 nfs = {
   server         = ""  # NFS server IP
