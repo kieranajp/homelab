@@ -3,7 +3,6 @@ ingress:
   annotations:
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
-    # traefik.ingress.kubernetes.io/router.middlewares: auth@file,default-prefix@kubernetescrd
   hosts:
     - grafana.seldon.local
     - grafana.kieranajp.uk

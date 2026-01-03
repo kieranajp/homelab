@@ -77,6 +77,14 @@ configmap:
                 href: http://schwengel.local:9091/transmission/web/
                 description: Torrents
                 icon: transmission.png
+            - LazyLibrarian:
+                href: https://lazylibrarian.kieranajp.uk
+                description: Ebook management
+                icon: lazylibrarian.png
+            - Calibre Web:
+                href: https://calibre.kieranajp.uk
+                description: Ebook library
+                icon: calibre-web.png
 
         - Infrastructure:
             - Homepage:
