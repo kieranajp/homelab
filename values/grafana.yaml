@@ -4,12 +4,10 @@ ingress:
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
   hosts:
-    - grafana.seldon.local
     - grafana.kieranajp.uk
   tls:
     - secretName: grafana-tls
       hosts:
-        - grafana.seldon.local
         - grafana.kieranajp.uk
 
 grafana.ini:

@@ -15,6 +15,43 @@ resource "cloudflare_record" "wildcard_subdomain" {
   }
 }
 
+resource "cloudflare_record" "agilewithedele_root" {
+  zone_id = var.cloudflare_agilewithedele_zone_id
+  name    = "@"
+  content = var.cluster_public_ip
+  type    = "A"
+  proxied = false
+  ttl     = 300
+
+  comment = "Managed by Terraform - Routes to homelab"
+
+  lifecycle {
+    ignore_changes = [content]
+  }
+}
+
+resource "cloudflare_record" "agilewithedele_www" {
+  zone_id = var.cloudflare_agilewithedele_zone_id
+  name    = "www"
+  content = "agilewithedele.com"
+  type    = "CNAME"
+  proxied = false
+  ttl     = 300
+
+  comment = "Managed by Terraform - CNAME to root domain"
+}
+
+resource "cloudflare_record" "agilewithedele_images" {
+  zone_id = var.cloudflare_agilewithedele_zone_id
+  name    = "images"
+  content = "agilewithedele.com"
+  type    = "CNAME"
+  proxied = false
+  ttl     = 300
+
+  comment = "Managed by Terraform - CNAME to root domain"
+}
+
 # Dynamic DNS updater to keep the wildcard record in sync with public IP
 resource "kubernetes_deployment" "cloudflare_ddns" {
   metadata {
@@ -58,7 +95,7 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
 
           env {
             name  = "DOMAINS"
-            value = "*.kieranajp.uk"
+            value = "*.kieranajp.uk,agilewithedele.com"
           }
 
           env {
