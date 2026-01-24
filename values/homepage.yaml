@@ -59,6 +59,10 @@ configmap:
                 href: https://paperless.kieranajp.uk
                 description: Document management
                 icon: paperless-ngx.png
+            - BentoPDF:
+                href: https://pdf.kieranajp.uk
+                description: Privacy-first PDF toolkit
+                icon: mdi-file-pdf-box
 
         - Media:
             - Plex:
