@@ -21,6 +21,10 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
+    checkly = {
+      source  = "checkly/checkly"
+      version = "~> 1.0"
+    }
   }
 }
 
@@ -38,4 +42,9 @@ provider "kubernetes" {
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
+}
+
+provider "checkly" {
+  api_key    = var.checkly_api_key
+  account_id = var.checkly_account_id
 }

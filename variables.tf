@@ -141,8 +141,44 @@ variable "nfs" {
   })
 }
 
+variable "plex_claim_token" {
+  description = "Plex claim token from https://plex.tv/claim (4 min validity, first boot only)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "paperless_secret_key" {
   description = "Secret key for Paperless-ngx (32+ chars)"
+  type        = string
+  sensitive   = true
+}
+
+# VPN Configuration (Mullvad)
+variable "mullvad" {
+  description = "Mullvad VPN configuration for gluetun sidecar"
+  type = object({
+    wireguard_private_key = string
+    wireguard_addresses   = string # e.g., "10.66.212.123/32"
+    server_countries      = string # e.g., "Sweden,Switzerland"
+  })
+  sensitive = true
+  default = {
+    wireguard_private_key = ""
+    wireguard_addresses   = ""
+    server_countries      = ""
+  }
+}
+
+# Checkly Monitoring
+variable "checkly_api_key" {
+  description = "Checkly API key from https://app.checklyhq.com/settings/account/api-keys"
+  type        = string
+  sensitive   = true
+}
+
+variable "checkly_account_id" {
+  description = "Checkly account ID from https://app.checklyhq.com/settings/account/general"
   type        = string
   sensitive   = true
 }
