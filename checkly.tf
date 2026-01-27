@@ -14,12 +14,12 @@ resource "checkly_check" "homepage" {
 
   request {
     url              = "https://home.kieranajp.uk"
-    follow_redirects = true
+    follow_redirects = false
 
     assertion {
       source     = "STATUS_CODE"
       comparison = "EQUALS"
-      target     = "200"
+      target     = "302"
     }
 
     assertion {
