@@ -46,3 +46,16 @@ nfs = {
 
 # Applications
 paperless_secret_key = ""
+plex_claim_token     = ""
+
+# VPN (Mullvad)
+# Get WireGuard config from: https://mullvad.net/en/account/wireguard-config
+mullvad = {
+  wireguard_private_key = ""              # Your WireGuard private key
+  wireguard_addresses   = "10.x.x.x/32"   # Your assigned address
+  server_countries      = "Sweden"        # Optional: preferred server locations
+}
+
+# Checkly Monitoring
+checkly_api_key    = ""  # From https://app.checklyhq.com/settings/account/api-keys
+checkly_account_id = ""  # From https://app.checklyhq.com/settings/account/general
