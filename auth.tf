@@ -194,8 +194,9 @@ resource "helm_release" "kratos_selfservice_ui" {
 
   values = [
     yamlencode({
-      kratosPublicUrl = "http://kratos-public:4433"
-      baseUrl         = "https://kratos.kieranajp.uk/ui"
+      kratosPublicUrl   = "http://kratos-public:4433"
+      kratosBrowserUrl  = "https://kratos.kieranajp.uk"
+      baseUrl           = "https://kratos.kieranajp.uk/ui"
       deployment = {
         extraVolumes = [
           {
