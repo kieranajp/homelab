@@ -133,6 +133,7 @@ variable "nfs" {
   type = object({
     server         = string
     tv_path        = string
+    movies_path    = string
     books_path     = string
     downloads_path = string
     docs_path      = string

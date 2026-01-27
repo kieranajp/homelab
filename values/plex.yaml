@@ -1,0 +1,34 @@
+fullnameOverride: plex
+
+image:
+  tag: latest
+
+pms:
+  storageClassName: local-path
+  configStorage: 10Gi
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  url: plex.kieranajp.uk
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: auth-oathkeeper-forward-auth@kubernetescrd
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+  tls:
+    - hosts:
+        - plex.kieranajp.uk
+
+service:
+  type: ClusterIP
+
+extraEnv:
+  TZ: Europe/Berlin
+  PLEX_UPDATE_CHANNEL: "5"
