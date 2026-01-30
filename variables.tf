@@ -183,3 +183,28 @@ variable "checkly_account_id" {
   type        = string
   sensitive   = true
 }
+
+# OpenClaw Configuration
+variable "anthropic_api_key" {
+  description = "Anthropic API key for Claude models"
+  type        = string
+  sensitive   = true
+}
+
+variable "gemini_api_key" {
+  description = "Google Gemini API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "telegram_bot_token" {
+  description = "Telegram bot token from @BotFather"
+  type        = string
+  sensitive   = true
+}
+
+variable "openclaw_gateway_token" {
+  description = "OpenClaw gateway authentication token (generate with: openssl rand -hex 32)"
+  type        = string
+  sensitive   = true
+}

@@ -1,0 +1,21 @@
+image:
+  repository: ghcr.io/openclaw/openclaw
+  tag: latest
+
+agent:
+  model: google/gemini-3-flash-preview
+
+persistence:
+  size: 5Gi
+
+ingress:
+  enabled: true
+  match: Host(`openclaw.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi

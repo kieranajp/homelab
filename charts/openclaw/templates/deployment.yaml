@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: setup
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args:
+            - "node"
+            - "dist/index.js"
+            - "onboard"
+            - "--non-interactive"
+            - "--accept-risk"
+            - "--mode"
+            - "local"
+            - "--auth-choice"
+            - "gemini-api-key"
+            - "--gemini-api-key"
+            - "$(GEMINI_API_KEY)"
+            - "--gateway-bind"
+            - "lan"
+            - "--gateway-auth"
+            - "token"
+            - "--gateway-token"
+            - "$(OPENCLAW_GATEWAY_TOKEN)"
+            - "--skip-daemon"
+            - "--skip-channels"
+            - "--skip-skills"
+            - "--skip-health"
+            - "--skip-ui"
+          env:
+            - name: HOME
+              value: /home/node
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: gemini-api-key
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: gateway-token
+          volumeMounts:
+            - name: config
+              mountPath: /home/node/.openclaw
+      containers:
+        - name: openclaw
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args:
+            - "node"
+            - "dist/index.js"
+            - "gateway"
+            - "--bind"
+            - "lan"
+            - "--port"
+            - "18789"
+          ports:
+            - name: gateway
+              containerPort: 18789
+          env:
+            - name: HOME
+              value: /home/node
+            - name: TERM
+              value: xterm-256color
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: gateway-token
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: anthropic-api-key
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: gemini-api-key
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: telegram-bot-token
+          volumeMounts:
+            - name: config
+              mountPath: /home/node/.openclaw
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-config
