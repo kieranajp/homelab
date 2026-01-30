@@ -208,3 +208,9 @@ variable "openclaw_gateway_token" {
   type        = string
   sensitive   = true
 }
+
+variable "openclaw_model" {
+  description = "OpenClaw AI model (e.g., google/gemini-3-flash-preview, anthropic/claude-sonnet-4-5)"
+  type        = string
+  default     = "google/gemini-3-flash-preview"
+}

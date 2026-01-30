@@ -8,6 +8,9 @@ resource "helm_release" "openclaw" {
   values = [
     file("${path.module}/values/openclaw.yaml"),
     yamlencode({
+      agent = {
+        model = var.openclaw_model
+      }
       secrets = {
         gatewayToken     = var.openclaw_gateway_token
         anthropicApiKey  = var.anthropic_api_key

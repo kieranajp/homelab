@@ -96,6 +96,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-secrets
                   key: telegram-bot-token
+            - name: OPENCLAW_MODEL
+              value: {{ .Values.agent.model | quote }}
           volumeMounts:
             - name: config
               mountPath: /home/node/.openclaw
