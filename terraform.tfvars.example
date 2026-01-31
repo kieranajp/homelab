@@ -68,3 +68,10 @@ telegram_bot_token     = ""  # From @BotFather on Telegram
 openclaw_gateway_token = ""  # Generate with: openssl rand -hex 32
 openclaw_model         = "google/gemini-3-flash-preview"  # Or: anthropic/claude-sonnet-4-5
 openclaw_github_token  = ""
+
+# 1Password Connect
+# Create server at: 1Password → Settings → Integrations → Secrets Automation
+onepassword_credentials = <<-EOF
+{paste 1password-credentials.json contents}
+EOF
+onepassword_token = ""  # Access token from the same setup

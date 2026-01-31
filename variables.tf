@@ -220,3 +220,16 @@ variable "openclaw_github_token" {
   type        = string
   sensitive   = true
 }
+
+# 1Password Connect
+variable "onepassword_credentials" {
+  description = "Contents of 1password-credentials.json file from Connect server setup"
+  type        = string
+  sensitive   = true
+}
+
+variable "onepassword_token" {
+  description = "1Password Connect access token for the Kubernetes operator"
+  type        = string
+  sensitive   = true
+}
