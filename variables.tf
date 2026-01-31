@@ -214,3 +214,9 @@ variable "openclaw_model" {
   type        = string
   default     = "google/gemini-3-flash-preview"
 }
+
+variable "openclaw_github_token" {
+  description = "GitHub token for OpenClaw (scoped separately from registry token)"
+  type        = string
+  sensitive   = true
+}

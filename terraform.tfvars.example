@@ -67,3 +67,4 @@ gemini_api_key         = ""  # From https://aistudio.google.com/apikey
 telegram_bot_token     = ""  # From @BotFather on Telegram
 openclaw_gateway_token = ""  # Generate with: openssl rand -hex 32
 openclaw_model         = "google/gemini-3-flash-preview"  # Or: anthropic/claude-sonnet-4-5
+openclaw_github_token  = ""

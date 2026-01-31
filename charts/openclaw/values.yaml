@@ -25,3 +25,4 @@ secrets:
   anthropicApiKey: ""
   geminiApiKey: ""
   telegramBotToken: ""
+  githubToken: ""

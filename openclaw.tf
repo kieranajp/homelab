@@ -1,7 +1,7 @@
 resource "helm_release" "openclaw" {
   name      = "openclaw"
   chart     = "./charts/openclaw"
-  namespace = "homelab"
+  namespace = "agents"
   timeout   = 300
   atomic    = true
 
@@ -16,6 +16,7 @@ resource "helm_release" "openclaw" {
         anthropicApiKey  = var.anthropic_api_key
         geminiApiKey     = var.gemini_api_key
         telegramBotToken = var.telegram_bot_token
+        githubToken      = var.openclaw_github_token
       }
     })
   ]
