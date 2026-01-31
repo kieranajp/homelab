@@ -15,6 +15,7 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-sa
       initContainers:
         - name: setup
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
