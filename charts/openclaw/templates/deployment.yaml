@@ -49,12 +49,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-secrets
-                  key: gemini-api-key
+                  key: GEMINI_API_KEY
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-secrets
-                  key: gateway-token
+                  key: OPENCLAW_GATEWAY_TOKEN
           volumeMounts:
             - name: config
               mountPath: /home/node/.openclaw
@@ -77,33 +77,15 @@ spec:
               value: /home/node
             - name: TERM
               value: xterm-256color
-            - name: OPENCLAW_GATEWAY_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: gateway-token
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: anthropic-api-key
-            - name: GEMINI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: gemini-api-key
-            - name: TELEGRAM_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: telegram-bot-token
             - name: OPENCLAW_MODEL
               value: {{ .Values.agent.model | quote }}
-            - name: GITHUB_TOKEN
+            {{- range $key, $value := .Values.secrets }}
+            - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: github-token
+                  name: {{ $.Release.Name }}-secrets
+                  key: {{ $key }}
+            {{- end }}
           volumeMounts:
             - name: config
               mountPath: /home/node/.openclaw

@@ -12,11 +12,12 @@ resource "helm_release" "openclaw" {
         model = var.openclaw_model
       }
       secrets = {
-        gatewayToken     = var.openclaw_gateway_token
-        anthropicApiKey  = var.anthropic_api_key
-        geminiApiKey     = var.gemini_api_key
-        telegramBotToken = var.telegram_bot_token
-        githubToken      = var.openclaw_github_token
+        OPENCLAW_GATEWAY_TOKEN = var.openclaw_gateway_token
+        ANTHROPIC_API_KEY      = var.anthropic_api_key
+        GEMINI_API_KEY         = var.gemini_api_key
+        TELEGRAM_BOT_TOKEN     = var.telegram_bot_token
+        GITHUB_TOKEN           = var.openclaw_github_token
+        ONEPASSWORD_TOKEN      = var.onepassword_token
       }
     })
   ]
