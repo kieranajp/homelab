@@ -214,3 +214,21 @@ variable "openclaw_model" {
   type        = string
   default     = "google/gemini-3-flash-preview"
 }
+
+variable "google_clive_client_id" {
+  description = "Google OAuth client ID for Clive"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_clive_client_secret" {
+  description = "Google OAuth client secret for Clive"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_clive_refresh_token" {
+  description = "Google OAuth refresh token for Clive"
+  type        = string
+  sensitive   = true
+}

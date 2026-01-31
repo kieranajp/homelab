@@ -78,18 +78,18 @@ spec:
             - name: AUTH_GOOGLE_CLIVE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-google-clive
-                  key: client-id
+                  name: {{ .Release.Name }}-secrets
+                  key: google-clive-client-id
             - name: AUTH_GOOGLE_CLIVE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-google-clive
-                  key: client-secret
+                  name: {{ .Release.Name }}-secrets
+                  key: google-clive-client-secret
             - name: AUTH_GOOGLE_CLIVE_REFRESH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-google-clive
-                  key: refresh-token
+                  name: {{ .Release.Name }}-secrets
+                  key: google-clive-refresh-token
             - name: TERM
               value: xterm-256color
             - name: OPENCLAW_GATEWAY_TOKEN

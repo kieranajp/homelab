@@ -12,10 +12,13 @@ resource "helm_release" "openclaw" {
         model = var.openclaw_model
       }
       secrets = {
-        gatewayToken     = var.openclaw_gateway_token
-        anthropicApiKey  = var.anthropic_api_key
-        geminiApiKey     = var.gemini_api_key
-        telegramBotToken = var.telegram_bot_token
+        gatewayToken            = var.openclaw_gateway_token
+        anthropicApiKey         = var.anthropic_api_key
+        geminiApiKey            = var.gemini_api_key
+        telegramBotToken        = var.telegram_bot_token
+        googleCliveClientId     = var.google_clive_client_id
+        googleCliveClientSecret = var.google_clive_client_secret
+        googleCliveRefreshToken = var.google_clive_refresh_token
       }
     })
   ]
