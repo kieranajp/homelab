@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}-role
   namespace: {{ .Release.Namespace }}
 rules:
-  - apiGroups: ["", "apps", "networking.k8s.io"]
-    resources: ["pods", "pods/log", "pods/exec", "deployments", "services", "ingresses", "secrets", "configmaps", "persistentvolumeclaims"]
+  - apiGroups: ["", "apps", "networking.k8s.io", "batch"]
+    resources: ["pods", "pods/log", "pods/exec", "deployments", "services", "ingresses", "secrets", "configmaps", "persistentvolumeclaims", "jobs"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
     resources: ["pods/exec"]
