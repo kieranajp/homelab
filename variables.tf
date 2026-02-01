@@ -221,6 +221,24 @@ variable "openclaw_github_token" {
   sensitive   = true
 }
 
+variable "google_clive_client_id" {
+  description = "Google credentials for Clive"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_clive_client_secret" {
+  description = "Google credentials for Clive"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_clive_refresh_token" {
+  description = "Google credentials for Clive"
+  type        = string
+  sensitive   = true
+}
+
 # 1Password Connect
 variable "onepassword_credentials" {
   description = "Contents of 1password-credentials.json file from Connect server setup"

@@ -69,6 +69,10 @@ openclaw_gateway_token = ""  # Generate with: openssl rand -hex 32
 openclaw_model         = "google/gemini-3-flash-preview"  # Or: anthropic/claude-sonnet-4-5
 openclaw_github_token  = ""
 
+google_clive_client_id     = ""
+google_clive_client_secret = ""
+google_clive_refresh_token = ""
+
 # 1Password Connect
 # Create server at: 1Password → Settings → Integrations → Secrets Automation
 onepassword_credentials = <<-EOF

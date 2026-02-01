@@ -8,6 +8,9 @@ persistence:
 ingress:
   enabled: true
   match: Host(`openclaw.kieranajp.uk`)
+  middlewares:
+    - name: ory-auth
+      namespace: auth
 
 resources:
   limits:

@@ -10,6 +10,13 @@ spec:
   routes:
     - kind: Rule
       match: {{ .Values.ingress.match | quote }}
+      {{- if .Values.ingress.middlewares }}
+      middlewares:
+      {{- range .Values.ingress.middlewares }}
+      - name: {{ .name }}
+        namespace: {{ .namespace }}
+      {{- end }}
+      {{- end }}
       services:
         - name: {{ .Release.Name }}
           port: 18789
