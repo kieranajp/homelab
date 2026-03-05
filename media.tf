@@ -83,3 +83,43 @@ resource "helm_release" "calibre_web_automated" {
 
   depends_on = [kubernetes_namespace.namespaces]
 }
+
+resource "helm_release" "transmission" {
+  name      = "transmission"
+  chart     = "./charts/transmission"
+  namespace = "homelab"
+  timeout   = 120
+  atomic    = true
+
+  values = [
+    file("${path.module}/values/transmission.yaml"),
+    yamlencode({
+      puid = var.nfs.puid
+      pgid = var.nfs.pgid
+      vpn = {
+        enabled             = true
+        provider            = "mullvad"
+        wireguardPrivateKey = var.mullvad.wireguard_private_key
+        wireguardAddresses  = var.mullvad.wireguard_addresses
+        serverCountries     = var.mullvad.server_countries
+        inputPorts          = "51413"
+        firewallInputPorts  = "9091"
+        ports = [
+          { name = "web", port = 9091 },
+          { name = "peer-tcp", port = 51413, protocol = "TCP" },
+          { name = "peer-udp", port = 51413, protocol = "UDP" }
+        ]
+      }
+      auth = {
+        username = var.transmission.username
+        password = var.transmission.password
+      }
+      nfs = {
+        server        = var.nfs.server
+        downloadsPath = var.nfs.downloads_path
+      }
+    })
+  ]
+
+  depends_on = [kubernetes_namespace.namespaces]
+}

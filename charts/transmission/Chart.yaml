@@ -1,0 +1,4 @@
+apiVersion: v2
+name: transmission
+version: 0.1.0
+description: Transmission torrent client with VPN sidecar

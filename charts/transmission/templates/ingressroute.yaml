@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: {{ printf "%s && PathPrefix(`/transmission/rpc`)" .Values.ingress.match | quote }}
+      middlewares:
+        - name: lan-only
+      services:
+        - name: {{ .Release.Name }}
+          port: 9091
+    - kind: Rule
+      match: {{ .Values.ingress.match | quote }}
+      middlewares:
+        - name: ory-auth
+          namespace: auth
+      services:
+        - name: {{ .Release.Name }}
+          port: 9091
+  tls:
+    certResolver: letsencrypt
+{{- end }}

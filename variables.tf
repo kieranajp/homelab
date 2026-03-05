@@ -251,3 +251,12 @@ variable "onepassword_token" {
   type        = string
   sensitive   = true
 }
+
+variable "transmission" {
+  description = "Transmission built-in auth credentials (for RPC access from LAN)"
+  type = object({
+    username = string
+    password = string
+  })
+  sensitive = true
+}

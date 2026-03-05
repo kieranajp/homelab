@@ -74,7 +74,7 @@ configmap:
                 description: Indexer manager
                 icon: prowlarr.png
             - Transmission:
-                href: http://schwengel.local:9091/transmission/web/
+                href: https://transmission.kieranajp.uk
                 description: Torrents
                 icon: transmission.png
             - LazyLibrarian:

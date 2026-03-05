@@ -7,5 +7,5 @@ terraform.tfstate
 terraform.tfstate.*
 
 # Talos
-talos-kubeconfig
+*-kubeconfig
 talosconfig
