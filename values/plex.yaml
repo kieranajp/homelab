@@ -20,7 +20,6 @@ ingress:
   ingressClassName: traefik
   url: plex.kieranajp.uk
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: auth-oathkeeper-forward-auth@kubernetescrd
     traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
   tls:
     - hosts:

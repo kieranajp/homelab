@@ -5,10 +5,6 @@ ingress:
     traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
   hosts:
     - grafana.kieranajp.uk
-  tls:
-    - secretName: grafana-tls
-      hosts:
-        - grafana.kieranajp.uk
 
 grafana.ini:
   auth.anonymous:
