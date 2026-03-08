@@ -96,11 +96,12 @@ resource "kubernetes_job" "hydra_client_setup" {
                 sleep 5
               done
 
-              # Create MCP client for client credentials flow
+              # Create or update MCP client for client credentials flow
               hydra create client \
                 --endpoint http://hydra-admin:4445 \
                 --id mcp-client \
                 --name "MCP HTTP Client" \
+                --secret "${var.hydra_mcp_client_secret}" \
                 --grant-type client_credentials \
                 --scope api:read,api:write \
                 --token-endpoint-auth-method client_secret_basic || true

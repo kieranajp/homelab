@@ -92,6 +92,12 @@ variable "kratos_secret" {
   sensitive   = true
 }
 
+variable "hydra_mcp_client_secret" {
+  description = "OAuth client secret for MCP API client (generate with: openssl rand -hex 32)"
+  type        = string
+  sensitive   = true
+}
+
 variable "kratos_identities" {
   description = "List of Kratos identities to create"
   type = list(object({
