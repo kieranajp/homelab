@@ -63,16 +63,22 @@ resource "helm_release" "oathkeeper" {
   atomic     = false
 
   values = [
-    file("${path.module}/values/oathkeeper.yaml")
+    templatefile("${path.module}/values/oathkeeper.yaml", {
+      oauth_clients = var.hydra_oauth_clients
+    })
   ]
 
   depends_on = [helm_release.hydra]
 }
 
-# OAuth client configuration for MCP
-resource "kubernetes_job" "hydra_client_setup" {
+# OAuth2 client creation (client_credentials grant for machine-to-machine auth)
+# Each app that needs API auth gets its own client.
+# Clients with url_match get a dedicated Oathkeeper rule requiring their scopes.
+resource "kubernetes_job" "hydra_oauth_client" {
+  for_each = var.hydra_oauth_clients
+
   metadata {
-    name      = "hydra-client-setup"
+    name      = "hydra-client-${each.key}"
     namespace = "auth"
   }
 
@@ -90,22 +96,21 @@ resource "kubernetes_job" "hydra_client_setup" {
           args = [
             "-c",
             <<-EOT
-              # Wait for Hydra to be ready using health endpoint
               until wget -q --spider http://hydra-admin:4445/health/ready; do
                 echo "Waiting for Hydra..."
                 sleep 5
               done
 
-              # Create MCP client for client credentials flow
               hydra create client \
                 --endpoint http://hydra-admin:4445 \
-                --id mcp-client \
-                --name "MCP HTTP Client" \
+                --id ${each.key} \
+                --name "${each.value.name}" \
+                --secret "${each.value.secret}" \
                 --grant-type client_credentials \
-                --scope api:read,api:write \
+                --scope ${join(",", each.value.scopes)} \
                 --token-endpoint-auth-method client_secret_basic || true
 
-              echo "OAuth clients configured successfully"
+              echo "Client ${each.key} configured successfully"
             EOT
           ]
         }
