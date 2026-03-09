@@ -69,7 +69,7 @@ resource "helm_release" "oathkeeper" {
   depends_on = [helm_release.hydra]
 }
 
-# OAuth client configuration for MCP
+# OAuth client configuration for MCP (legacy - kept for backwards compatibility)
 resource "kubernetes_job" "hydra_client_setup" {
   metadata {
     name      = "hydra-client-setup"
@@ -107,6 +107,63 @@ resource "kubernetes_job" "hydra_client_setup" {
                 --token-endpoint-auth-method client_secret_basic || true
 
               echo "OAuth clients configured successfully"
+            EOT
+          ]
+        }
+      }
+    }
+  }
+
+  depends_on = [helm_release.hydra]
+}
+
+# Variable-driven OAuth2 client creation
+# Each app that needs API auth gets its own client_credentials client.
+# Define clients in terraform.tfvars:
+#   hydra_oauth_clients = {
+#     "my-app" = {
+#       name   = "My App API Client"
+#       secret = "generated-secret-here"
+#       scopes = ["api:read", "api:write"]
+#     }
+#   }
+resource "kubernetes_job" "hydra_oauth_client" {
+  for_each = var.hydra_oauth_clients
+
+  metadata {
+    name      = "hydra-client-${each.key}"
+    namespace = "auth"
+  }
+
+  spec {
+    template {
+      metadata {}
+      spec {
+        restart_policy = "OnFailure"
+
+        container {
+          name  = "hydra-client-setup"
+          image = "oryd/hydra:v2.3.0"
+
+          command = ["/bin/sh"]
+          args = [
+            "-c",
+            <<-EOT
+              until wget -q --spider http://hydra-admin:4445/health/ready; do
+                echo "Waiting for Hydra..."
+                sleep 5
+              done
+
+              hydra create client \
+                --endpoint http://hydra-admin:4445 \
+                --id ${each.key} \
+                --name "${each.value.name}" \
+                --secret "${each.value.secret}" \
+                --grant-type client_credentials \
+                --scope ${join(",", each.value.scopes)} \
+                --token-endpoint-auth-method client_secret_basic || true
+
+              echo "Client ${each.key} configured successfully"
             EOT
           ]
         }

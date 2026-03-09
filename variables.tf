@@ -98,6 +98,17 @@ variable "hydra_mcp_client_secret" {
   sensitive   = true
 }
 
+variable "hydra_oauth_clients" {
+  description = "Additional OAuth2 client credentials clients for API authentication. Each client gets a client_credentials grant with the specified scopes."
+  type = map(object({
+    name   = string
+    secret = string
+    scopes = list(string)
+  }))
+  sensitive = true
+  default   = {}
+}
+
 variable "kratos_identities" {
   description = "List of Kratos identities to create"
   type = list(object({

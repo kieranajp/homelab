@@ -32,6 +32,18 @@ kratos_identities = [
     last_name  = "Name"
   },
 ]
+hydra_mcp_client_secret = ""  # openssl rand -hex 32
+
+# API OAuth Clients (client_credentials grant for machine-to-machine auth)
+# Each app that needs API auth gets its own entry.
+# Generate secrets with: openssl rand -hex 32
+hydra_oauth_clients = {
+  # "my-app" = {
+  #   name   = "My App API Client"
+  #   secret = ""  # openssl rand -hex 32
+  #   scopes = ["api:read", "api:write"]
+  # }
+}
 
 # Storage
 nfs = {

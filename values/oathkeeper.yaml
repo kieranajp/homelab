@@ -1,12 +1,28 @@
 oathkeeper:
   accessRules: |
-    - id: "default-auth"
+    - id: "api-bearer-auth"
+      match:
+        url: "<https?://[^/]+/api(/.*)?>"
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+      authenticators:
+        - handler: jwt
+      authorizer:
+        handler: allow
+      mutators:
+        - handler: header
+          config:
+            headers:
+              X-User: "{{ print .Subject }}"
+      errors:
+        - handler: json
+
+    - id: "browser-auth"
       match:
         url: "<.*>"
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
       authenticators:
-        - handler: jwt
         - handler: cookie_session
+        - handler: jwt
       authorizer:
         handler: allow
       mutators:
