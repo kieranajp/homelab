@@ -32,16 +32,21 @@ kratos_identities = [
     last_name  = "Name"
   },
 ]
-hydra_mcp_client_secret = ""  # openssl rand -hex 32
-
 # API OAuth Clients (client_credentials grant for machine-to-machine auth)
-# Each app that needs API auth gets its own entry.
+# Each app gets its own client. Set url_match to restrict tokens to specific endpoints.
 # Generate secrets with: openssl rand -hex 32
 hydra_oauth_clients = {
-  # "my-app" = {
-  #   name   = "My App API Client"
-  #   secret = ""  # openssl rand -hex 32
-  #   scopes = ["api:read", "api:write"]
+  # "mcp-server" = {
+  #   name      = "MCP Server"
+  #   secret    = ""  # openssl rand -hex 32
+  #   scopes    = ["mcp:api"]
+  #   url_match = "<https?://mcp\\.kieranajp\\.uk/api(/.*)?>"
+  # }
+  # "my-other-app" = {
+  #   name      = "My Other App"
+  #   secret    = ""  # openssl rand -hex 32
+  #   scopes    = ["other-app:api"]
+  #   url_match = "<https?://other-app\\.kieranajp\\.uk/api(/.*)?>"
   # }
 }
 
