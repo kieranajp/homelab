@@ -238,7 +238,7 @@ Traefik evaluates routes in order and uses the most specific match. The RPC path
 - [x] Chart contains all 7 files: Chart.yaml, _vpn.tpl, deployment.yaml, service.yaml, pvc.yaml, middleware.yaml, ingressroute.yaml
 
 #### Manual Verification:
-- [ ] Templates look correct on visual inspection
+- [x] Templates look correct on visual inspection
 
 ---
 
@@ -349,15 +349,15 @@ resource "helm_release" "transmission" {
 
 #### Automated Verification:
 - [x] `tofu validate` passes
-- [ ] `tofu plan` shows the new helm_release resource to be created
+- [x] `tofu plan` shows the new helm_release resource to be created
 
 #### Manual Verification:
-- [ ] `tofu apply` deploys successfully
-- [ ] Pod starts with 2/2 containers ready
-- [ ] Gluetun healthcheck passes
-- [ ] IP check shows Mullvad exit IP (not home IP)
-- [ ] Web UI accessible at `https://transmission.kieranajp.uk` (requires Google auth)
-- [ ] RPC accessible from LAN with Transmission username/password (no Google auth)
+- [x] `tofu apply` deploys successfully
+- [x] Pod starts with 2/2 containers ready
+- [x] Gluetun healthcheck passes
+- [x] IP check shows Mullvad exit IP (not home IP)
+- [x] Web UI accessible at `https://transmission.kieranajp.uk` (requires Google auth)
+- [x] RPC accessible from LAN with Transmission username/password (no Google auth)
 - [ ] RPC rejected from non-LAN IPs without Google auth
 
 ---
@@ -391,8 +391,8 @@ To:
 ### Success Criteria:
 
 #### Manual Verification:
-- [ ] Homepage shows updated Transmission link
-- [ ] Link works and reaches the web UI
+- [x] Homepage shows updated Transmission link
+- [x] Link works and reaches the web UI
 
 ---
 

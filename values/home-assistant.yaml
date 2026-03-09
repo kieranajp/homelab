@@ -17,6 +17,19 @@ additionalPorts:
     hostPort: 1400
     protocol: TCP
 
+securityContext:
+  privileged: true
+
+additionalVolumes:
+  - name: zigbee
+    hostPath:
+      path: /dev/ttyUSB0
+      type: CharDevice
+
+additionalMounts:
+  - name: zigbee
+    mountPath: /dev/ttyUSB0
+
 persistence:
   enabled: true
   size: 5Gi
