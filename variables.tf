@@ -92,20 +92,14 @@ variable "kratos_secret" {
   sensitive   = true
 }
 
-variable "hydra_mcp_client_secret" {
-  description = "OAuth client secret for MCP API client (generate with: openssl rand -hex 32)"
-  type        = string
-  sensitive   = true
-}
-
 variable "hydra_oauth_clients" {
-  description = "Additional OAuth2 client credentials clients for API authentication. Each client gets a client_credentials grant with the specified scopes."
+  description = "OAuth2 client credentials clients for API authentication. Each client gets a client_credentials grant. Set url_match to restrict tokens to specific URL patterns via Oathkeeper rules."
   type = map(object({
-    name   = string
-    secret = string
-    scopes = list(string)
+    name      = string
+    secret    = string
+    scopes    = list(string)
+    url_match = optional(string) # Oathkeeper URL regex, e.g. "<https?://mcp\\.kieranajp\\.uk/api(/.*)?>"
   }))
-  sensitive = true
   default   = {}
 }
 

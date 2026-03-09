@@ -63,70 +63,17 @@ resource "helm_release" "oathkeeper" {
   atomic     = false
 
   values = [
-    file("${path.module}/values/oathkeeper.yaml")
+    templatefile("${path.module}/values/oathkeeper.yaml", {
+      oauth_clients = var.hydra_oauth_clients
+    })
   ]
 
   depends_on = [helm_release.hydra]
 }
 
-# OAuth client configuration for MCP (legacy - kept for backwards compatibility)
-resource "kubernetes_job" "hydra_client_setup" {
-  metadata {
-    name      = "hydra-client-setup"
-    namespace = "auth"
-  }
-
-  spec {
-    template {
-      metadata {}
-      spec {
-        restart_policy = "OnFailure"
-
-        container {
-          name  = "hydra-client-setup"
-          image = "oryd/hydra:v2.3.0"
-
-          command = ["/bin/sh"]
-          args = [
-            "-c",
-            <<-EOT
-              # Wait for Hydra to be ready using health endpoint
-              until wget -q --spider http://hydra-admin:4445/health/ready; do
-                echo "Waiting for Hydra..."
-                sleep 5
-              done
-
-              # Create or update MCP client for client credentials flow
-              hydra create client \
-                --endpoint http://hydra-admin:4445 \
-                --id mcp-client \
-                --name "MCP HTTP Client" \
-                --secret "${var.hydra_mcp_client_secret}" \
-                --grant-type client_credentials \
-                --scope api:read,api:write \
-                --token-endpoint-auth-method client_secret_basic || true
-
-              echo "OAuth clients configured successfully"
-            EOT
-          ]
-        }
-      }
-    }
-  }
-
-  depends_on = [helm_release.hydra]
-}
-
-# Variable-driven OAuth2 client creation
-# Each app that needs API auth gets its own client_credentials client.
-# Define clients in terraform.tfvars:
-#   hydra_oauth_clients = {
-#     "my-app" = {
-#       name   = "My App API Client"
-#       secret = "generated-secret-here"
-#       scopes = ["api:read", "api:write"]
-#     }
-#   }
+# OAuth2 client creation (client_credentials grant for machine-to-machine auth)
+# Each app that needs API auth gets its own client.
+# Clients with url_match get a dedicated Oathkeeper rule requiring their scopes.
 resource "kubernetes_job" "hydra_oauth_client" {
   for_each = var.hydra_oauth_clients
 

@@ -1,5 +1,30 @@
 oathkeeper:
   accessRules: |
+%{ for id, client in oauth_clients ~}
+%{ if client.url_match != null ~}
+    - id: "api-${id}"
+      match:
+        url: '${client.url_match}'
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+      authenticators:
+        - handler: jwt
+          config:
+            required_scope:
+%{ for scope in client.scopes ~}
+              - "${scope}"
+%{ endfor ~}
+      authorizer:
+        handler: allow
+      mutators:
+        - handler: header
+          config:
+            headers:
+              X-User: "{{ print .Subject }}"
+      errors:
+        - handler: json
+
+%{ endif ~}
+%{ endfor ~}
     - id: "api-bearer-auth"
       match:
         url: "<https?://[^/]+/api(/.*)?>"
@@ -18,7 +43,7 @@ oathkeeper:
 
     - id: "browser-auth"
       match:
-        url: "<.*>"
+        url: "<https?://[^/]+/(?!api(/.*)?$).*>"
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
       authenticators:
         - handler: cookie_session

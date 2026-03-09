@@ -22,6 +22,9 @@ hydra:
         pairwise:
           salt: "${hydra_salt}"
 
+    strategies:
+      access_token: jwt
+
     oauth2:
       expose_internal_errors: true
 
