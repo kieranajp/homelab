@@ -20,6 +20,15 @@ additionalPorts:
 securityContext:
   privileged: true
 
+livenessProbe:
+  exec:
+    command:
+      - test
+      - -e
+      - /dev/ttyUSB0
+  periodSeconds: 30
+  failureThreshold: 3
+
 additionalVolumes:
   - name: zigbee
     hostPath:
