@@ -81,7 +81,7 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
       spec {
         container {
           name  = "cloudflare-ddns"
-          image = "favonia/cloudflare-ddns:1.15.0"
+          image = "favonia/cloudflare-ddns:1.15.1"
 
           env {
             name = "CLOUDFLARE_API_TOKEN"
@@ -101,6 +101,11 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
           env {
             name  = "PROXIED"
             value = "false"
+          }
+
+          env {
+            name  = "IP4_PROVIDER"
+            value = "url:https://api.ipify.org"
           }
 
           env {
