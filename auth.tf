@@ -52,6 +52,12 @@ resource "helm_release" "hydra" {
   depends_on = [kubernetes_job.hydra_migration]
 }
 
+locals {
+  oathkeeper_values = templatefile("${path.module}/values/oathkeeper.yaml", {
+    oauth_clients = var.hydra_oauth_clients
+  })
+}
+
 # Ory Oathkeeper auth proxy
 resource "helm_release" "oathkeeper" {
   name       = "oathkeeper"
@@ -62,18 +68,19 @@ resource "helm_release" "oathkeeper" {
   timeout    = 60
   atomic     = false
 
-  values = [
-    templatefile("${path.module}/values/oathkeeper.yaml", {
-      oauth_clients = var.hydra_oauth_clients
-    })
-  ]
+  values = [local.oathkeeper_values]
 
   depends_on = [helm_release.hydra]
 }
 
+output "oathkeeper_rendered_values" {
+  value     = local.oathkeeper_values
+  sensitive = false
+}
+
 # OAuth2 client creation (client_credentials grant for machine-to-machine auth)
 # Each app that needs API auth gets its own client.
-# Clients with url_match get a dedicated Oathkeeper rule requiring their scopes.
+# Clients with api_host get a dedicated Oathkeeper rule requiring their scopes.
 resource "kubernetes_job" "hydra_oauth_client" {
   for_each = var.hydra_oauth_clients
 

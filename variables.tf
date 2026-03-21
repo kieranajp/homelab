@@ -93,14 +93,15 @@ variable "kratos_secret" {
 }
 
 variable "hydra_oauth_clients" {
-  description = "OAuth2 client credentials clients for API authentication. Each client gets a client_credentials grant. Set url_match to restrict tokens to specific URL patterns via Oathkeeper rules."
+  description = "OAuth2 client credentials clients for API authentication. Each client gets a client_credentials grant. Clients with api_host get a dedicated Oathkeeper rule for JWT-only auth on that host/path."
   type = map(object({
-    name      = string
-    secret    = string
-    scopes    = list(string)
-    url_match = optional(string) # Oathkeeper URL regex, e.g. "<https?://mcp\\.kieranajp\\.uk/api(/.*)?>"
+    name            = string
+    secret          = string
+    scopes          = list(string)
+    api_host        = optional(string) # e.g. "recipes.kieranajp.uk"
+    api_path_prefix = optional(string, "/api") # path prefix for the API rule
   }))
-  default   = {}
+  default = {}
 }
 
 variable "kratos_identities" {

@@ -69,17 +69,19 @@ In `terraform.tfvars`, add to `hydra_oauth_clients`:
 ```hcl
 hydra_oauth_clients = {
   "my-app" = {
-    name      = "My App"
-    secret    = ""  # Generate with: openssl rand -hex 32
-    scopes    = ["my-app:api"]
-    url_match = "<https?://my-app\\.kieranajp\\.uk/api(/.*)?>"
+    name            = "My App"
+    secret          = ""  # Generate with: openssl rand -hex 32
+    scopes          = ["my-app:api"]
+    api_host        = "my-app.kieranajp.uk"
+    api_path_prefix = "/api"
   }
 }
 ```
 
-- `url_match` creates an Oathkeeper rule requiring the listed scopes for that URL pattern
-- Without `url_match`, the token still works against the generic `/api` rule (no scope check)
-- Oathkeeper uses regex: `<pattern>` wraps the regex in `^...$` anchors. Escape dots with `\\.` (double backslash — the value passes through templatefile into single-quoted YAML)
+- `api_host` creates an Oathkeeper rule requiring the listed scopes for JWT auth on that host/path
+- `api_path_prefix` defaults to `/api` if omitted
+- Without `api_host`, the client gets no dedicated Oathkeeper rule (just an OAuth client)
+- The browser-auth catch-all automatically excludes all API host/path combos via a negative lookahead
 
 Run `tofu apply` to create the client via a Kubernetes Job that calls `hydra create client`.
 
@@ -132,9 +134,8 @@ spec:
 
 Rules are evaluated in order:
 
-1. **Per-client rules** (`api-{client_id}`) — specific URL + required scopes
-2. **`api-bearer-auth`** — any `/api` path, JWT required, no scope enforcement
-3. **`browser-auth`** — everything else, tries cookie then JWT, redirects to login on failure
+1. **Per-client rules** (`api-{client_id}`) — generated from `hydra_oauth_clients` with `api_host` set, JWT required with scope enforcement
+2. **`browser-auth`** — everything else (auto-excludes API paths), tries cookie then JWT, redirects to login on failure
 
 ## Headers Set by Oathkeeper
 

@@ -1,18 +1,20 @@
 oathkeeper:
   accessRules: |
 %{ for id, client in oauth_clients ~}
-%{ if client.url_match != null ~}
+%{ if client.api_host != null ~}
     - id: "api-${id}"
       match:
-        url: '${client.url_match}'
+        url: "<https?://${replace(client.api_host, ".", "\\\\.")}${client.api_path_prefix}(/.*)?>"
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
       authenticators:
         - handler: jwt
+%{ if length(client.scopes) > 0 ~}
           config:
             required_scope:
 %{ for scope in client.scopes ~}
               - "${scope}"
 %{ endfor ~}
+%{ endif ~}
       authorizer:
         handler: allow
       mutators:
@@ -25,25 +27,13 @@ oathkeeper:
 
 %{ endif ~}
 %{ endfor ~}
-    - id: "api-bearer-auth"
-      match:
-        url: "<https?://recipes\\.kieranajp\\.uk/api(/.*)?>"
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
-      authenticators:
-        - handler: jwt
-      authorizer:
-        handler: allow
-      mutators:
-        - handler: header
-          config:
-            headers:
-              X-User: "{{ print .Subject }}"
-      errors:
-        - handler: json
-
     - id: "browser-auth"
       match:
+%{ if length([for id, c in oauth_clients : c if c.api_host != null]) > 0 ~}
+        url: "<(?!${join("|", [for id, c in oauth_clients : "https?://${replace(c.api_host, ".", "\\\\.")}${c.api_path_prefix}(/.*)?$" if c.api_host != null])}).*>"
+%{ else ~}
         url: "<.*>"
+%{ endif ~}
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
       authenticators:
         - handler: cookie_session
