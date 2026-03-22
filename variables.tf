@@ -196,61 +196,6 @@ variable "checkly_account_id" {
   sensitive   = true
 }
 
-# OpenClaw Configuration
-variable "anthropic_api_key" {
-  description = "Anthropic API key for Claude models"
-  type        = string
-  sensitive   = true
-}
-
-variable "gemini_api_key" {
-  description = "Google Gemini API key"
-  type        = string
-  sensitive   = true
-}
-
-variable "telegram_bot_token" {
-  description = "Telegram bot token from @BotFather"
-  type        = string
-  sensitive   = true
-}
-
-variable "openclaw_gateway_token" {
-  description = "OpenClaw gateway authentication token (generate with: openssl rand -hex 32)"
-  type        = string
-  sensitive   = true
-}
-
-variable "openclaw_model" {
-  description = "OpenClaw AI model (e.g., google/gemini-3-flash-preview, anthropic/claude-sonnet-4-5)"
-  type        = string
-  default     = "google/gemini-3-flash-preview"
-}
-
-variable "openclaw_github_token" {
-  description = "GitHub token for OpenClaw (scoped separately from registry token)"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_clive_client_id" {
-  description = "Google credentials for Clive"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_clive_client_secret" {
-  description = "Google credentials for Clive"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_clive_refresh_token" {
-  description = "Google credentials for Clive"
-  type        = string
-  sensitive   = true
-}
-
 # 1Password Connect
 variable "onepassword_credentials" {
   description = "Contents of 1password-credentials.json file from Connect server setup"
