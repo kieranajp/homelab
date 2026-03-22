@@ -64,6 +64,11 @@ nfs = {
   pgid           = 1000
 }
 
+# Home Assistant
+ha_google_assistant_sa = <<-EOF
+{paste service account JSON from Google Cloud Console}
+EOF
+
 # Applications
 paperless_secret_key = ""
 plex_claim_token     = ""

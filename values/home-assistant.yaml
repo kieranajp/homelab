@@ -8,8 +8,31 @@ ingress:
 
 configuration:
   enabled: true
+  forceInit: true
   trusted_proxies:
     - "10.0.0.0/8"
+  templateConfig: |
+    default_config:
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        {{- range .Values.configuration.trusted_proxies }}
+        - {{ . }}
+        {{- end }}
+    sonos:
+      media_player:
+        hosts:
+          - 192.168.1.48
+        advertise_addr: 192.168.1.57
+    frontend:
+      themes: !include_dir_merge_named themes
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    google_assistant:
+      project_id: kieranajp
+      service_account: !include SERVICE_ACCOUNT.json
+      report_state: true
+    scene: !include scenes.yaml
 
 additionalPorts:
   - name: sonos
@@ -21,6 +44,7 @@ securityContext:
   privileged: true
 
 livenessProbe:
+  httpGet: null
   exec:
     command:
       - test
@@ -34,10 +58,17 @@ additionalVolumes:
     hostPath:
       path: /dev/ttyUSB0
       type: CharDevice
+  - name: ha-google-assistant-sa
+    secret:
+      secretName: ha-google-assistant-sa
 
 additionalMounts:
   - name: zigbee
     mountPath: /dev/ttyUSB0
+  - name: ha-google-assistant-sa
+    mountPath: /config/SERVICE_ACCOUNT.json
+    subPath: SERVICE_ACCOUNT.json
+    readOnly: true
 
 persistence:
   enabled: true

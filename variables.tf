@@ -264,6 +264,12 @@ variable "onepassword_token" {
   sensitive   = true
 }
 
+variable "ha_google_assistant_sa" {
+  description = "Google service account JSON for Home Assistant Google Assistant integration"
+  type        = string
+  sensitive   = true
+}
+
 variable "transmission" {
   description = "Transmission built-in auth credentials (for RPC access from LAN)"
   type = object({
