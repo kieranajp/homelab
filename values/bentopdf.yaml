@@ -1,0 +1,15 @@
+image:
+  repository: bentopdf/bentopdf
+  tag: latest
+
+ingress:
+  enabled: true
+  match: Host(`pdf.kieranajp.uk`)
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
