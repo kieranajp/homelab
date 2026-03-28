@@ -9,6 +9,8 @@ talos_hostname        = "talos-cp1"
 # Cloudflare (DNS & DDNS)
 cloudflare_api_token = ""  # Scoped token with DNS edit permissions
 cloudflare_zone_id   = ""
+cloudflare_agilewithedele_zone_id = ""
+cloudflare_tenno_zone_id = ""
 
 # TLS
 letsencrypt_email = ""

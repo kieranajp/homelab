@@ -33,6 +33,12 @@ variable "cloudflare_agilewithedele_zone_id" {
   sensitive   = true
 }
 
+variable "cloudflare_tenno_zone_id" {
+  description = "Cloudflare zone ID for tenno.club domain"
+  type        = string
+  sensitive   = true
+}
+
 variable "letsencrypt_email" {
   description = "Email address for Let's Encrypt certificate notifications"
   type        = string
