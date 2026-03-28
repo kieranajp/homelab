@@ -9,3 +9,6 @@ terraform.tfstate.*
 # Talos
 *-kubeconfig
 talosconfig
+
+# Helm chart cache
+.chart-cache

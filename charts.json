@@ -1,0 +1,16 @@
+[
+  { "repository": "https://helm.cilium.io/", "chart": "cilium", "version": "1.18.4" },
+  { "repository": "https://traefik.github.io/charts", "chart": "traefik", "version": "37.4.0" },
+  { "repository": "https://k8s.ory.sh/helm/charts", "chart": "hydra", "version": "0.57.2" },
+  { "repository": "https://k8s.ory.sh/helm/charts", "chart": "oathkeeper", "version": "0.58.0" },
+  { "repository": "https://k8s.ory.sh/helm/charts", "chart": "kratos", "version": "0.47.0" },
+  { "repository": "https://k8s.ory.sh/helm/charts", "chart": "kratos-selfservice-ui-node", "version": "0.33.0" },
+  { "repository": "https://victoriametrics.github.io/helm-charts/", "chart": "victoria-metrics-single", "version": "0.23.0" },
+  { "repository": "https://prometheus-community.github.io/helm-charts", "chart": "prometheus-node-exporter", "version": "4.47.1" },
+  { "repository": "https://grafana.github.io/helm-charts", "chart": "grafana", "version": "9.2.10" },
+  { "repository": "https://prometheus-community.github.io/helm-charts", "chart": "prometheus-blackbox-exporter", "version": "11.6.1" },
+  { "repository": "https://1password.github.io/connect-helm-charts", "chart": "connect", "version": "2.2.1" },
+  { "repository": "oci://oci.trueforge.org/truecharts", "chart": "homepage", "version": "10.3.0" },
+  { "repository": "https://pajikos.github.io/home-assistant-helm-chart", "chart": "home-assistant", "version": "0.3.51" },
+  { "repository": "https://raw.githubusercontent.com/plexinc/pms-docker/gh-pages", "chart": "plex-media-server", "version": "1.5.0" }
+]

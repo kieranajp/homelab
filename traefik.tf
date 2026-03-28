@@ -12,10 +12,8 @@ resource "kubernetes_secret" "cloudflare_api_token" {
 }
 
 resource "helm_release" "traefik" {
-  name       = "traefik"
-  repository = "https://traefik.github.io/charts"
-  chart      = "traefik"
-  version    = "37.4.0"
+  name  = "traefik"
+  chart = local.cached_chart["traefik"]
   namespace  = "kube-system"
   timeout    = 90
   atomic     = true

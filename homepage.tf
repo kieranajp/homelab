@@ -1,8 +1,6 @@
 resource "helm_release" "homepage" {
-  name             = "homepage"
-  repository       = "oci://oci.trueforge.org/truecharts"
-  chart            = "homepage"
-  version          = "10.3.0"
+  name  = "homepage"
+  chart = local.cached_chart["homepage"]
   namespace        = "homelab"
 
   values = [

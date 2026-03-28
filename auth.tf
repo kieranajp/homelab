@@ -6,6 +6,7 @@ resource "kubernetes_job" "hydra_migration" {
   }
 
   spec {
+    ttl_seconds_after_finished = 300
     template {
       metadata {}
       spec {
@@ -32,10 +33,8 @@ resource "kubernetes_job" "hydra_migration" {
 
 # Ory Hydra OAuth2 server
 resource "helm_release" "hydra" {
-  name       = "hydra"
-  repository = "https://k8s.ory.sh/helm/charts"
-  chart      = "hydra"
-  version    = "0.57.2"
+  name  = "hydra"
+  chart = local.cached_chart["hydra"]
   namespace  = "auth"
   timeout    = 120
   atomic     = true
@@ -60,10 +59,8 @@ locals {
 
 # Ory Oathkeeper auth proxy
 resource "helm_release" "oathkeeper" {
-  name       = "oathkeeper"
-  repository = "https://k8s.ory.sh/helm/charts"
-  chart      = "oathkeeper"
-  version    = "0.58.0"
+  name  = "oathkeeper"
+  chart = local.cached_chart["oathkeeper"]
   namespace  = "auth"
   timeout    = 60
   atomic     = false
@@ -90,6 +87,7 @@ resource "kubernetes_job" "hydra_oauth_client" {
   }
 
   spec {
+    ttl_seconds_after_finished = 300
     template {
       metadata {}
       spec {
@@ -136,6 +134,7 @@ resource "kubernetes_job" "kratos_migration" {
   }
 
   spec {
+    ttl_seconds_after_finished = 300
     template {
       metadata {}
       spec {
@@ -162,10 +161,8 @@ resource "kubernetes_job" "kratos_migration" {
 
 # Ory Kratos identity management
 resource "helm_release" "kratos" {
-  name       = "kratos"
-  repository = "https://k8s.ory.sh/helm/charts"
-  chart      = "kratos"
-  version    = "0.47.0"
+  name  = "kratos"
+  chart = local.cached_chart["kratos"]
   namespace  = "auth"
   timeout    = 120
   atomic     = true
@@ -198,10 +195,8 @@ resource "kubernetes_config_map" "kratos_ui_theme" {
 
 # Kratos selfservice UI
 resource "helm_release" "kratos_selfservice_ui" {
-  name       = "kratos-selfservice-ui"
-  repository = "https://k8s.ory.sh/helm/charts"
-  chart      = "kratos-selfservice-ui-node"
-  version    = "0.33.0"
+  name  = "kratos-selfservice-ui"
+  chart = local.cached_chart["kratos-selfservice-ui-node"]
   namespace  = "auth"
 
   values = [
@@ -250,6 +245,7 @@ resource "kubernetes_job" "kratos_identity_import" {
   }
 
   spec {
+    ttl_seconds_after_finished = 300
     template {
       metadata {}
       spec {

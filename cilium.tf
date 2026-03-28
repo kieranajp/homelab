@@ -2,10 +2,8 @@
 # Must be installed before any workloads that need networking
 
 resource "helm_release" "cilium" {
-  name       = "cilium"
-  repository = "https://helm.cilium.io/"
-  chart      = "cilium"
-  version    = "1.18.4"
+  name  = "cilium"
+  chart = local.cached_chart["cilium"]
   namespace  = "kube-system"
   timeout    = 90
   atomic     = true
