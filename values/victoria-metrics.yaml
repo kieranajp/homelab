@@ -31,6 +31,13 @@ server:
         - target_label: __address__
           replacement: blackbox-exporter-prometheus-blackbox-exporter.monitoring.svc.cluster.local:9115
 
+    - job_name: tenno-api
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets:
+          - tenno-api.apps.svc.cluster.local:3000
+
     # Internal cluster services (bypasses Ory auth)
     - job_name: blackbox-http-internal
       metrics_path: /probe
