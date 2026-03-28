@@ -209,6 +209,19 @@ variable "onepassword_token" {
   sensitive   = true
 }
 
+# Tailscale
+variable "tailscale_oauth_client_id" {
+  description = "Tailscale OAuth client ID (create at https://login.tailscale.com/admin/settings/oauth)"
+  type        = string
+  sensitive   = true
+}
+
+variable "tailscale_oauth_client_secret" {
+  description = "Tailscale OAuth client secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "ha_google_assistant_sa" {
   description = "Google service account JSON for Home Assistant Google Assistant integration"
   type        = string

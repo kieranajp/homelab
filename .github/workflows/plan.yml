@@ -1,0 +1,137 @@
+name: Tofu Plan
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same PR
+concurrency:
+  group: plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: OpenTofu Plan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.9
+
+      - name: Load secrets from 1Password
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - name: Write tfvars from 1Password
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        run: |
+          # Fetch the entire tfvars file stored as a secure note in 1Password
+          op read "op://Homelab-CI/terraform-tfvars/tfvars" > terraform.tfvars
+
+      - name: Tofu Init
+        run: tofu init
+
+      - name: Tofu Plan
+        id: plan
+        env:
+          TF_IN_AUTOMATION: true
+        run: |
+          # Run plan and capture exit code
+          # -detailed-exitcode: 0=no changes, 1=error, 2=changes present
+          set +e
+          tofu plan -detailed-exitcode -no-color -out=tfplan 2>&1 | tee plan_raw.txt
+          EXIT_CODE=$?
+          set -e
+
+          # Strip any lines that might leak sensitive values despite TF marking
+          # Redact anything that looks like a secret (tokens, keys, passwords)
+          sed -E \
+            -e 's/(password|secret|token|key|credential|private_key)\s*=\s*"[^"]+"/\1 = "<REDACTED>"/gi' \
+            -e 's/(-----BEGIN [A-Z ]+-----).*?(-----END [A-Z ]+-----)/\1 <REDACTED> \2/g' \
+            plan_raw.txt > plan_output.txt
+
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+          if [ $EXIT_CODE -eq 1 ]; then
+            echo "::error::Tofu plan failed"
+            exit 1
+          fi
+
+      - name: Comment plan on PR
+        if: always() && steps.plan.outputs.exit_code != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('plan_output.txt', 'utf8');
+            const exitCode = '${{ steps.plan.outputs.exit_code }}';
+
+            let summary;
+            if (exitCode === '0') {
+              summary = '**No changes.** Infrastructure is up-to-date.';
+            } else if (exitCode === '2') {
+              summary = '**Changes detected.** Review the plan below.';
+            } else {
+              summary = '**Plan failed.** See output below.';
+            }
+
+            // Truncate to stay within GitHub comment limits
+            const maxLen = 60000;
+            const truncated = plan.length > maxLen
+              ? plan.substring(0, maxLen) + '\n\n... (truncated)'
+              : plan;
+
+            const body = `### Tofu Plan
+            ${summary}
+
+            <details><summary>Show plan output</summary>
+
+            \`\`\`
+            ${truncated}
+            \`\`\`
+
+            </details>`;
+
+            // Find and update existing comment or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('### Tofu Plan')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
