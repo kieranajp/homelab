@@ -33,7 +33,7 @@ resource "kubernetes_cron_job_v1" "tracker_updater" {
                 AUTH="$TR_USER:$TR_PASS"
 
                 # Get session ID (first request returns 409 with the header)
-                SESSION_ID=$(curl -s -u "$AUTH" "$HOST" -o /dev/null -D - | grep -i 'X-Transmission-Session-Id' | awk '{print $2}' | tr -d '\r\n')
+                SESSION_ID=$(curl -s -u "$AUTH" "$HOST" -o /dev/null -D - | grep '^X-Transmission-Session-Id:' | awk '{print $2}' | tr -d '\r\n')
 
                 # Fetch tracker list, convert to JSON array
                 TRACKERS=$(curl -sf "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt" | grep -v '^$' | jq -R . | jq -s .)
