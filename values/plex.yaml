@@ -2,6 +2,7 @@ fullnameOverride: plex
 
 image:
   tag: latest
+  pullPolicy: Always
 
 pms:
   storageClassName: local-path
@@ -28,6 +29,10 @@ ingress:
 service:
   type: ClusterIP
 
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
 extraEnv:
   TZ: Europe/Berlin
   PLEX_UPDATE_CHANNEL: "5"
+  ADVERTISE_IP: "http://192.168.1.57:32400/"

@@ -64,14 +64,14 @@ configmap:
                 href: https://sonarr.kieranajp.uk
                 description: TV series management
                 icon: sonarr.png
+            - Radarr:
+                href: https://radarr.kieranajp.uk
+                description: Movie management
+                icon: radarr.png
             - Prowlarr:
                 href: https://prowlarr.kieranajp.uk
                 description: Indexer manager
                 icon: prowlarr.png
-            - Transmission:
-                href: https://transmission.kieranajp.uk
-                description: Torrents
-                icon: transmission.png
             - LazyLibrarian:
                 href: https://lazylibrarian.kieranajp.uk
                 description: Ebook management
@@ -98,6 +98,10 @@ configmap:
                 href: http://schwengel.local:5001
                 description: Synology NAS
                 icon: synology.png
+            - Transmission:
+                href: https://transmission.kieranajp.uk
+                description: Torrents
+                icon: transmission.png
 
       bookmarks.yaml: |
         ---

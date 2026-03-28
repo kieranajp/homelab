@@ -1,0 +1,4 @@
+apiVersion: v2
+name: radarr
+version: 0.1.0
+description: Radarr movie management

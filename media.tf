@@ -39,6 +39,29 @@ resource "helm_release" "sonarr" {
   depends_on = [kubernetes_namespace.namespaces]
 }
 
+resource "helm_release" "radarr" {
+  name      = "radarr"
+  chart     = "./charts/radarr"
+  namespace = "homelab"
+  timeout   = 120
+  atomic    = true
+
+  values = [
+    file("${path.module}/values/radarr.yaml"),
+    yamlencode({
+      puid = var.nfs.puid
+      pgid = var.nfs.pgid
+      nfs = {
+        server        = var.nfs.server
+        moviesPath    = var.nfs.movies_path
+        downloadsPath = var.nfs.downloads_path
+      }
+    })
+  ]
+
+  depends_on = [kubernetes_namespace.namespaces]
+}
+
 resource "helm_release" "lazylibrarian" {
   name      = "lazylibrarian"
   chart     = "./charts/lazylibrarian"
