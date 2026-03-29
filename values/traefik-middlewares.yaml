@@ -24,6 +24,17 @@ ingressRoutes:
       port: 8384
 %{ endif ~}
 
+%{ if namespace == "monitoring" ~}
+ingressRoutes:
+  grafana:
+    match: Host("grafana.kieranajp.uk")
+    middlewares:
+    - ory-auth
+    service:
+      name: grafana
+      port: 80
+%{ endif ~}
+
 %{ if namespace == "auth" ~}
 ingressRoutes:
   # Kratos selfservice UI (login/registration forms)
