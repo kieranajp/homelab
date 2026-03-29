@@ -1,15 +1,16 @@
 ingress:
-  enabled: true
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
-  hosts:
-    - grafana.kieranajp.uk
+  enabled: false
 
 grafana.ini:
   auth.anonymous:
+    enabled: false
+  auth.proxy:
     enabled: true
-    org_role: Admin
+    header_name: X-User
+    header_property: username
+    auto_sign_up: true
+  users:
+    auto_assign_org_role: Admin
 
 datasources:
   datasources.yaml:
